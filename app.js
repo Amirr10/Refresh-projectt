@@ -102,23 +102,28 @@ app.get('/check', async (req,res) => {
 
 app.get('/promise', async (req,res) => {
 
-    let [shookitFruits, refreshFruits, carmellaFruits, 
-         shookitVege, refreshVege, carmellaVege,
-         shookitGreen, refreshGreen] 
-        = await Promise.all([fruitsShookit(),  fruitsRefresh(), fruitsCarmella(),
-                         vegtablesRefresh(), vegtablesRefresh(), vegetablesCarmella(),
-                         greensShookit(), greensRefresh()]);
-
-  let [allFruits, allVeges, allGreens] = await Promise.all(
-            [combineFruitsOrVegetables(shookitFruits, refreshFruits, carmellaFruits),
-             combineFruitsOrVegetables(shookitVege, refreshVege, carmellaVege),
-             combineFruitsOrVegetables(shookitGreen, refreshGreen, carmellaVege)]);
-
-
-  let file = await createExcelFileWithCombine(allFruits, allVeges, allGreens)
-
-//   res.download('Excel.xlsx')
-  res.send()
+    try {
+        let [shookitFruits, refreshFruits, carmellaFruits, 
+            shookitVege, refreshVege, carmellaVege,
+            shookitGreen, refreshGreen] 
+           = await Promise.all([fruitsShookit(),  fruitsRefresh(), fruitsCarmella(),
+                            vegtablesRefresh(), vegtablesRefresh(), vegetablesCarmella(),
+                            greensShookit(), greensRefresh()]);
+   
+     let [allFruits, allVeges, allGreens] = await Promise.all(
+               [combineFruitsOrVegetables(shookitFruits, refreshFruits, carmellaFruits),
+                combineFruitsOrVegetables(shookitVege, refreshVege, carmellaVege),
+                combineFruitsOrVegetables(shookitGreen, refreshGreen, carmellaVege)]);
+   
+   
+     let file = await createExcelFileWithCombine(allFruits, allVeges, allGreens)
+   
+    //   res.download('Excel.xlsx')
+     res.send()
+    } catch (error) {
+        console.log(error)
+    }
+    
 })
 
 
