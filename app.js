@@ -709,10 +709,9 @@ async function vegetablesCarmella(){
 
     let carmella = `https://www.carmella.co.il/product-category/%d7%99%d7%a8%d7%a7%d7%95%d7%aa/`
 
-    const browser = await puppeteer.launch({headless:false,
-                                            args: ["--no-sandbox"]
-                                          });
+    const browser = await puppeteer.launch({ignoreDefaultArgs: ['--disable-extensions']});
 
+    
     const page = await browser.newPage();
     await page.goto(carmella)
     await page.setViewport({
