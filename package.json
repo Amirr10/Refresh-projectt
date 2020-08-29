@@ -1,0 +1,21 @@
+{
+  "name": "refreshAug",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "start": "nodemon app.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "excel4node": "^1.7.2",
+    "express": "^4.17.1",
+    "puppeteer": "^5.2.1",
+    "puppeteer-cluster": "^0.22.0"
+  },
+  "devDependencies": {
+    "nodemon": "^2.0.4"
+  }
+}
