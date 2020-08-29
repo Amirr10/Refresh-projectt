@@ -123,9 +123,10 @@ app.get('/promise', async (req,res) => {
 
 
 app.get('/promiseAll', async (req,res) => {
+
     let fruits = await callProgram()
   
-    res.send()
+    res.download('Excel.xlsx')
 })
 
 
@@ -145,7 +146,7 @@ async function callProgram(){
          combineFruitsOrVegetables(shookitGreen, refreshGreen, carmellaVege)]);
 
 
-    // let file = await createExcelFileWithCombine(allFruits, allVeges, allGreens)
+    let file = await createExcelFileWithCombine(allFruits, allVeges, allGreens)
 }
 
 
@@ -304,7 +305,7 @@ async function fruitsShookit(){
 
     let shookit = `https://www.shookit.com/product-category/%d7%a4%d7%99%d7%a8%d7%95%d7%aa/`
 
-    const browser = await puppeteer.launch();
+    const browser = await puppeteer.launch({args: ['--no-sandbox', '--disable-setuid-sandbox']});
     const page = await browser.newPage();
     await page.goto(shookit)
 
@@ -388,7 +389,7 @@ async function fruitsRefresh(){
 
     let refresh = `https://www.refresh-market.co.il/category/%D7%A4%D7%99%D7%A8%D7%95%D7%AA`
 
-    const browser = await puppeteer.launch();
+    const browser = await puppeteer.launch({args: ['--no-sandbox', '--disable-setuid-sandbox']});
     const page = await browser.newPage();
     await page.goto(refresh)
 
@@ -444,7 +445,7 @@ async function fruitsCarmella(){
 
     let carmella = `https://www.carmella.co.il/product-category/%d7%a4%d7%99%d7%a8%d7%95%d7%aa-%d7%a8%d7%90%d7%a9%d7%99/`
 
-    const browser = await puppeteer.launch();  // {headless:false}
+    const browser = await puppeteer.launch({args: ['--no-sandbox', '--disable-setuid-sandbox']});  // {headless:false}
     
     const page = await browser.newPage();
     await page.goto(carmella)
@@ -582,7 +583,7 @@ async function vegtablesShookit(){
 
     let refresh = `https://www.shookit.com/product-category/%d7%99%d7%a8%d7%a7%d7%95%d7%aa/`
 
-    const browser = await puppeteer.launch();
+    const browser = await puppeteer.launch({args: ['--no-sandbox', '--disable-setuid-sandbox']});
     const page = await browser.newPage();
     await page.goto(refresh)
 
@@ -658,7 +659,7 @@ async function vegtablesRefresh(){
 
     let refresh = `https://www.refresh-market.co.il/category/%D7%99%D7%A8%D7%A7%D7%95%D7%AA`
 
-    const browser = await puppeteer.launch();
+    const browser = await puppeteer.launch({args: ['--no-sandbox', '--disable-setuid-sandbox']});
     const page = await browser.newPage();
     await page.goto(refresh)
 
@@ -818,7 +819,7 @@ async function greensRefresh(){
 
     let refresh = `https://www.refresh-market.co.il/category/%D7%99%D7%A8%D7%95%D7%A7%D7%99%D7%9D`
 
-    const browser = await puppeteer.launch();
+    const browser = await puppeteer.launch({args: ['--no-sandbox', '--disable-setuid-sandbox']});
     const page = await browser.newPage();
     await page.goto(refresh)
 
@@ -883,7 +884,7 @@ async function greensShookit(){
 
     let refresh = `https://www.shookit.com/product-category/%d7%99%d7%a8%d7%95%d7%a7%d7%99%d7%9d/`
 
-    const browser = await puppeteer.launch();
+    const browser = await puppeteer.launch({args: ['--no-sandbox', '--disable-setuid-sandbox']});
     const page = await browser.newPage();
     await page.goto(refresh)
 
@@ -936,9 +937,7 @@ async function greensShookit(){
 
         
         
-        
-
-
+    
         let temp = {}
         temp.name = name
         temp.price = price
@@ -1030,55 +1029,9 @@ function compareThirdLists(productRefresh, carmellaList) {
 
     }
 
-  
-
-
-    // if (nameShookit[0] === nameRefresh[0] && nameRefresh.length > 1 && nameShookit.length > 1) {
-    //     if (nameShookit[1] === nameRefresh[1] && nameRefresh.length > 2 && nameShookit.length > 2) {
-    //         if(nameShookit[2] === nameRefresh[2]){
-    //             combineArr = [productRefresh, shookitObj]
-    //             break
-    //         }
-    //     } else if (nameShookit[1] === nameRefresh[1]) {
-    //             combineArr = [productRefresh, shookitObj]
-    //             break
-    //         } 
-    // } else if(nameShookit[0] === nameRefresh[0] && nameRefresh.length === 1) {
-    //         combineArr = [productRefresh, shookitObj]
-    //         break;
-    //     }
-
-
     // console.log(carmellaObj,'carObj')
     return carmellaObj
 }
-
-
-
-function compareByName(nameShookit, nameRefresh){
-    console.log(nameShookit)
-    console.log(nameRefresh)
-    console.log("<br>")
-    console.log(" ")
-
-
-    
-
-    // if(nameShookit[0] === nameRefresh[0]){
-    //     if(nameShookit.length === 1 || nameRefresh.length === 1){
-    //         combineObj.push([shookitObj, refreshObj])
-    //         break
-    //     } else if(nameShookit.length > 1 && nameRefresh.length > 1){
-    //         if(nameShookit[1] === nameRefresh[1]){
-    //             combineObj.push([shookitObj, refreshObj])
-    //             break
-    //         } else {
-    //             continue
-    //         }
-    //     }  
-    // } 
-}
-
 
 
 
