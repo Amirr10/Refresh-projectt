@@ -2,6 +2,8 @@ const express = require('express');
 const excel = require('excel4node');
 const workbook = new excel.Workbook();
 const puppeteer = require('puppeteer');
+let kue = require('kue');
+
 const fs = require('fs');
 
 const app = express();
@@ -85,6 +87,20 @@ let vegeListRefresh = [
 ]
 
 
+
+app.get('/test', (req,res) => {
+
+
+    setTimeout(() => {
+        console.log('HEYYYY')
+    }, 5000);
+    // vegtablesShookit()
+
+    res.json('Good')
+})
+
+
+
 app.get('/check', async (req,res) => {
 
     try {
@@ -129,29 +145,45 @@ app.get('/promise', async (req,res) => {
 
 app.get('/promiseAll', async (req,res) => {
 
-    let fruits = await callProgram()
+    // let fruits = await callProgram()
+    let fruits = callProgram()
+
   
-    res.download('Excel.xlsx')
+    res.json('Good')
+    // res.download('Excel.xlsx')
 })
 
 
 
 async function callProgram(){
 
-  let [shookitFruits, refreshFruits, carmellaFruits, 
-    shookitVege, refreshVege, carmellaVege,
-    shookitGreen, refreshGreen] 
-    = await Promise.all([fruitsShookit(),  fruitsRefresh(), fruitsCarmella(),
-                     vegtablesRefresh(), vegtablesRefresh(), vegetablesCarmella(),
-                     greensShookit(), greensRefresh()]);
+    let [shookitFruits, refreshFruits, carmellaFruits,
+         shookitVege, refreshVege, carmellaVege,
+         shookitGreen, refreshGreen]
+        = await Promise.all([fruitsShookit(), fruitsRefresh(), fruitsCarmella(),
+                            vegtablesShookit(),vegtablesRefresh(), vegetablesCarmella(),
+                            greensShookit(), greensRefresh()]);  
+    
+    // let [allFruits, allVeges, allGreens] = await Promise.all(
+    //     [combineFruitsOrVegetables(shookitFruits, refreshFruits, carmellaFruits),
+    //      combineFruitsOrVegetables(shookitVege, refreshVege, carmellaVege),
+    //      combineFruitsOrVegetables(shookitGreen, refreshGreen, carmellaVege)]);
 
-    let [allFruits, allVeges, allGreens] = await Promise.all(
-        [combineFruitsOrVegetables(shookitFruits, refreshFruits, carmellaFruits),
-         combineFruitsOrVegetables(shookitVege, refreshVege, carmellaVege),
-         combineFruitsOrVegetables(shookitGreen, refreshGreen, carmellaVege)]);
+         let combineVegeObject = await combineFruitsOrVegetables(shookitVege, refreshVege, carmellaVege)
+         let combineFruitObject = await combineFruitsOrVegetables(shookitFruits, refreshFruits, carmellaFruits)
+         let combineGreenObject = await combineFruitsOrVegetables(shookitGreen, refreshGreen, carmellaVege)
 
+         await printPromise(combineVegeObject,'comvege')
+         await printPromise(combineFruitObject,'comvfruit')
+         await printPromise(combineGreenObject,'comgreen')
 
-    let file = await createExcelFileWithCombine(allFruits, allVeges, allGreens)
+         let file = await createExcelFileWithCombine(combineFruitObject, combineVegeObject, combineGreenObject)
+
+    // let file = await createExcelFileWithCombine(allFruits, allVeges, allGreens)
+}
+
+function printPromise(shookitFruits,name){
+    console.log(shookitFruits.length, name)
 }
 
 
@@ -251,7 +283,8 @@ async function combo(){
     let shookitVegtables = await vegtablesShookit()
     let refreshVegtables = await vegtablesRefresh()
     let carmellaVegtables = await vegetablesCarmella()
-    
+
+
     let shookitGreen = await greensShookit()
     let refreshGreen = await greensRefresh()
     let carmellaGreen = await vegetablesCarmella()
@@ -260,8 +293,10 @@ async function combo(){
     let combineFruitObject = await combineFruitsOrVegetables(shookitFruits, refreshFruits, carmellaFruits)
     let combineGreenObject = await combineFruitsOrVegetables(shookitGreen, refreshGreen, carmellaGreen)
 
-
     let file = await createExcelFileWithCombine(combineFruitObject, combineVegeObject, combineGreenObject)
+
+        // await printPromise(carmellaVegtables,'caarm')
+
 }
 // combo()
 
@@ -301,6 +336,7 @@ async function combineFruitsOrVegetables(shookitFruits, refreshFruits, carmellaF
     }
 
     console.log('combineFruitsOrVegetables done')
+    // console.log()
 
     return combineObj
 }
@@ -381,7 +417,7 @@ async function fruitsShookit(){
     let sortObj = obj.fruits.sort((a,b) => a.name.localeCompare(b.name))
     // sortObj.forEach(el => console.log(el))
     
-    console.log('fruitsShookit done')
+    console.log(sortObj.length,'fruitsShookit done')
 
     browser.close()
     return sortObj
@@ -436,7 +472,7 @@ async function fruitsRefresh(){
     let sortObj = obj.fruits.sort((a,b) => a.name.localeCompare(b.name))
         // sortObj.forEach(el => console.log(el))
 
-    console.log('fruitsRefresh done')
+    console.log(sortObj.length,'fruitsRefresh done')
 
     browser.close()
     return sortObj   
@@ -576,7 +612,7 @@ async function fruitsCarmella(){
 
 
     let sortObj = obj.fruits.sort((a,b) => a.name.localeCompare(b.name))
-    console.log('fruitsCarmella done')
+    console.log(sortObj.length,'fruitsCarmella done')
 
     browser.close()
     return sortObj  
@@ -654,7 +690,7 @@ async function vegtablesShookit(){
     // let sortPrint = sortObj.forEach(el => console.log(el))
     browser.close()
 
-    console.log('vegtablesShookit done')
+    console.log(obj.vegetables.length, 'vegtablesShookit done')
     return obj.vegetables   
 }
 
@@ -703,7 +739,7 @@ async function vegtablesRefresh(){
 
     browser.close()
 
-    console.log('vegtablesRefresh done')
+    console.log(sortObj.length,'vegtablesRefresh done')
     return sortObj 
 }
 // vegtablesRefresh()
@@ -809,8 +845,9 @@ productPrice.forEach((price,i) => {
 })
 
 
-    // let sortObj = obj.vegetables.sort((a,b) => a.name.localeCompare(b.name))
+    let sortObj = obj.vegetables.sort((a,b) => a.name.localeCompare(b.name))
     // sortObj.forEach(el => console.log(el))
+    console.log(obj.vegetables.length,'vegetablesCarmella done')
 
     browser.close()
     return obj.vegetables  
@@ -878,7 +915,7 @@ async function greensRefresh(){
 
     browser.close()
 
-    console.log('greensRefresh done')
+    console.log(sortObj.length, 'greensRefresh done')
     return sortObj 
 }
 
@@ -958,7 +995,7 @@ async function greensShookit(){
     // let sortPrint = sortObj.forEach(el => console.log(el))
     browser.close()
 
-    console.log('greensShookit done')
+    console.log(obj.greens.length,'greensShookit done')
     return obj.greens   
 }
 

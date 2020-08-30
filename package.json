@@ -12,6 +12,7 @@
   "dependencies": {
     "excel4node": "^1.7.2",
     "express": "^4.17.1",
+    "kue": "^0.11.6",
     "puppeteer": "^5.2.1",
     "puppeteer-cluster": "^0.22.0"
   },
