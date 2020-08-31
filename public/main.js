@@ -1,4 +1,4 @@
-const socket = io('http://localhost:3000/')
+const socket = io('https://refresh-app1.herokuapp.com')
 let button = document.querySelector('.btn')
 let downloadBtn = document.querySelector('.sec-btn')
 
