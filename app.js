@@ -285,9 +285,7 @@ async function checkEqualItems(listRefresh){
 // checkEqualItems(vegeListRefresh)
 
 
-
-//get fruits from shookit
-app.get("/hhhh", async (req,res) => {
+async function testProg(){
 
     let shookitFruits = await fruitsShookit()
     let refreshFruits = await fruitsRefresh()
@@ -308,8 +306,39 @@ app.get("/hhhh", async (req,res) => {
 
     let file = await createExcelFileWithCombine(combineFruitObject, combineVegeObject, combineGreenObject)
 
-    // res.json(combineFruitObject);
-    res.download('Excel.xlsx')
+         await io.on('connection', socket => {
+            socket.emit('new-msg', 'message from callProgram')
+        })
+
+}
+
+
+//get fruits from shookit
+app.get("/test2", async (req,res) => {
+
+    // let shookitFruits = await fruitsShookit()
+    // let refreshFruits = await fruitsRefresh()
+    // let carmellaFruits = await fruitsCarmella()
+
+    // let shookitVegtables = await vegtablesShookit()
+    // let refreshVegtables = await vegtablesRefresh()
+    // let carmellaVegtables = await vegetablesCarmella()
+    
+    // let shookitGreen = await greensShookit()
+    // let refreshGreen = await greensRefresh()
+    // let carmellaGreen = await vegetablesCarmella()
+  
+    // let combineVegeObject = await combineFruitsOrVegetables(shookitVegtables, refreshVegtables, carmellaVegtables)
+    // let combineFruitObject = await combineFruitsOrVegetables(shookitFruits, refreshFruits, carmellaFruits)
+    // let combineGreenObject = await combineFruitsOrVegetables(shookitGreen, refreshGreen, carmellaGreen)
+
+
+    // let file = await createExcelFileWithCombine(combineFruitObject, combineVegeObject, combineGreenObject)
+
+    let func = testProg()
+
+    res.json('test2');
+    // res.download('Excel.xlsx')
 })
 
 

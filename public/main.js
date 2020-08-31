@@ -14,8 +14,8 @@ socket.on('welcome-msg', data => {
 
 //send request to http://localhost:5000/promiseAll
 button.addEventListener('click', () => {
-    // fetch('http://localhost:5000/promiseAll')
-    fetch('https://refresh-app1.herokuapp.com/promiseAll/')
+    // fetch('http://localhost:5000/test2')
+    fetch('https://refresh-app1.herokuapp.com/test2/')
 
     // https://refresh-app1.herokuapp.com/promiseAll/
 })
