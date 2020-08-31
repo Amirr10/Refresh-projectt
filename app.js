@@ -1,14 +1,15 @@
 const express = require('express');
 const excel = require('excel4node');
-const app = express();
+const app = express()
+    , server = require('http').createServer(app)
+    , io = require('socket.io').listen(server);
 
 const workbook = new excel.Workbook();
 const puppeteer = require('puppeteer');
 const cors = require('cors')
-const server = require('http').Server(app)
 
 const fs = require('fs');
-const io = require('socket.io')(app)
+// const io = require('socket.io')('3000')
 
 app.use(express.static('public'))
 app.use(cors())
@@ -1448,7 +1449,7 @@ async function selectAll(){
 
 
 
-app.listen(process.env.PORT || 5000, () => console.log("Connected"))
+server.listen(process.env.PORT || 5000, () => console.log("Connected"))
 
 
 
