@@ -8,6 +8,8 @@ const fs = require('fs');
 
 const app = express();
 const io = require('socket.io')(3000)
+
+app.use(express.static('public'))
 app.use(cors())
 
 io.on('connection', socket => {
