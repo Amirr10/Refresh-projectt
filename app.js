@@ -305,11 +305,10 @@ async function testProg(){
 
 
     let file = await createExcelFileWithCombine(combineFruitObject, combineVegeObject, combineGreenObject)
-
-         await io.on('connection', socket => {
-            socket.emit('new-msg', 'message from callProgram')
-        })
-
+    console.log("Done create excel")
+        //  await io.on('connection', socket => {
+        //     socket.emit('new-msg', 'message from callProgram')
+        // })
 }
 
 
@@ -1401,6 +1400,10 @@ function createExcelFileWithCombine(fruitsObjects, vegeObjects, greensObjects){
 
     console.log('done')
     workbook.write('Excel.xlsx');
+
+    io.on('connection', socket => {
+        socket.emit('new-msg', 'message from callProgram')
+    })///////////
 }
 
 
