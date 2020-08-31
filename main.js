@@ -1,4 +1,4 @@
-const socket = io('http://localhost:3000/')
+const socket = io('https://refresh-app1.herokuapp.com/')
 let button = document.querySelector('.btn')
 let downloadBtn = document.querySelector('.sec-btn')
 
@@ -10,7 +10,10 @@ socket.on('welcome-msg', data => {
 
 //send request to http://localhost:5000/promiseAll
 button.addEventListener('click', () => {
-    fetch('http://localhost:5000/promiseAll')
+    // fetch('http://localhost:5000/promiseAll')
+    fetch('https://refresh-app1.herokuapp.com/promiseAll/')
+
+    // https://refresh-app1.herokuapp.com/promiseAll/
 })
 
 
