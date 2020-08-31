@@ -7,7 +7,7 @@ const cors = require('cors')
 const fs = require('fs');
 
 const app = express();
-const io = require('socket.io')(3000)
+const io = require('socket.io')(app)
 
 app.use(express.static('public'))
 app.use(cors())
