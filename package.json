@@ -10,11 +10,13 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "cors": "^2.8.5",
     "excel4node": "^1.7.2",
     "express": "^4.17.1",
     "kue": "^0.11.6",
     "puppeteer": "^5.2.1",
-    "puppeteer-cluster": "^0.22.0"
+    "puppeteer-cluster": "^0.22.0",
+    "socket.io": "^2.3.0"
   },
   "devDependencies": {
     "nodemon": "^2.0.4"

@@ -2,11 +2,39 @@ const express = require('express');
 const excel = require('excel4node');
 const workbook = new excel.Workbook();
 const puppeteer = require('puppeteer');
-let kue = require('kue');
+const cors = require('cors')
 
 const fs = require('fs');
 
 const app = express();
+const io = require('socket.io')(3000)
+app.use(cors())
+
+io.on('connection', socket => {
+    socket.emit('welcome-msg', 'Hello Socket')
+})
+
+
+app.get('/socket', (req,res) => {
+
+    callSocket()
+
+    res.json('nice')
+})
+
+function callSocket(){
+    io.on('connection', socket => {
+        socket.emit('new-msg', 'message from callSocket')
+    })
+}
+
+
+app.get('/client', (req,res) => {
+
+    console.log('/client')
+
+    res.download('Excel.xlsx')
+})
 
 
 let fruitListRefresh = [
@@ -88,17 +116,6 @@ let vegeListRefresh = [
 
 
 
-app.get('/test', (req,res) => {
-
-
-    setTimeout(() => {
-        console.log('HEYYYY')
-    }, 5000);
-    // vegtablesShookit()
-
-    res.json('Good')
-})
-
 
 
 app.get('/check', async (req,res) => {
@@ -134,8 +151,13 @@ app.get('/promise', async (req,res) => {
    
      let file = await createExcelFileWithCombine(allFruits, allVeges, allGreens)
    
+
     //   res.download('Excel.xlsx')
-     res.send()
+    //  res.send()
+    await io.on('connection', socket => {
+        socket.emit('new-msg', 'message from callSocket')
+    })
+
     } catch (error) {
         console.log(error)
     }
@@ -147,7 +169,6 @@ app.get('/promiseAll', async (req,res) => {
 
     // let fruits = await callProgram()
     let fruits = callProgram()
-
   
     res.json('Good')
     // res.download('Excel.xlsx')
@@ -160,9 +181,9 @@ async function callProgram(){
     let [shookitFruits, refreshFruits, carmellaFruits,
          shookitVege, refreshVege, carmellaVege,
          shookitGreen, refreshGreen]
-        = await Promise.all([fruitsShookit(), fruitsRefresh(), fruitsCarmella(),
-                            vegtablesShookit(),vegtablesRefresh(), vegetablesCarmella(),
-                            greensShookit(), greensRefresh()]);  
+        = await Promise.all([fruitsShookit(), await fruitsRefresh(), fruitsCarmella(),
+                            vegtablesShookit(), await vegtablesRefresh(), vegetablesCarmella(),
+                            greensShookit(), await greensRefresh()]);  
     
     // let [allFruits, allVeges, allGreens] = await Promise.all(
     //     [combineFruitsOrVegetables(shookitFruits, refreshFruits, carmellaFruits),
@@ -179,8 +200,21 @@ async function callProgram(){
 
          let file = await createExcelFileWithCombine(combineFruitObject, combineVegeObject, combineGreenObject)
 
+         await io.on('connection', socket => {
+            socket.emit('new-msg', 'message from callProgram')
+        })
     // let file = await createExcelFileWithCombine(allFruits, allVeges, allGreens)
 }
+
+
+app.get('/download', (req,res) => {
+
+    console.log('/client')
+
+    res.download('Excel.xlsx')
+})
+
+
 
 function printPromise(shookitFruits,name){
     console.log(shookitFruits.length, name)
@@ -249,7 +283,7 @@ async function checkEqualItems(listRefresh){
 
 
 //get fruits from shookit
-app.get("/", async (req,res) => {
+app.get("/hhhh", async (req,res) => {
 
     let shookitFruits = await fruitsShookit()
     let refreshFruits = await fruitsRefresh()
@@ -276,26 +310,34 @@ app.get("/", async (req,res) => {
 
 
 async function combo(){
+
     let shookitFruits = await fruitsShookit()
     let refreshFruits = await fruitsRefresh()
     let carmellaFruits = await fruitsCarmella()
 
-    let shookitVegtables = await vegtablesShookit()
-    let refreshVegtables = await vegtablesRefresh()
-    let carmellaVegtables = await vegetablesCarmella()
+    // let shookitVegtables = await vegtablesShookit()
+    // let refreshVegtables = await vegtablesRefresh()
+    // let carmellaVegtables = await vegetablesCarmella()
 
+    // let shookitGreen = await greensShookit()
+    // let refreshGreen = await greensRefresh()
+    // let carmellaGreen = await vegetablesCarmella()
 
-    let shookitGreen = await greensShookit()
-    let refreshGreen = await greensRefresh()
-    let carmellaGreen = await vegetablesCarmella()
-
-    let combineVegeObject = await combineFruitsOrVegetables(shookitVegtables, refreshVegtables, carmellaVegtables)
+    // let combineVegeObject = await combineFruitsOrVegetables(shookitVegtables, refreshVegtables, carmellaVegtables)
     let combineFruitObject = await combineFruitsOrVegetables(shookitFruits, refreshFruits, carmellaFruits)
-    let combineGreenObject = await combineFruitsOrVegetables(shookitGreen, refreshGreen, carmellaGreen)
+    
+    // let combineGreenObject = await combineFruitsOrVegetables(shookitGreen, refreshGreen, carmellaGreen)
+    let combineGreenObject = []
+    let combineVegeObject = []
+
+
 
     let file = await createExcelFileWithCombine(combineFruitObject, combineVegeObject, combineGreenObject)
+    // await printPromise(carmellaVegtables,'carm')
 
-        // await printPromise(carmellaVegtables,'caarm')
+    io.on('connection', socket => {
+        socket.emit('new-msg', 'message from callSocket')
+    })
 
 }
 // combo()
