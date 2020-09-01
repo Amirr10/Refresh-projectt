@@ -124,7 +124,7 @@ let vegeListRefresh = [
 
 app.get('/check', async (req,res) => {
 
-    let obj = await fruitsRefresh()
+    let obj = await vegetablesCarmella()
 
     res.json(obj)
     
@@ -562,7 +562,7 @@ async function fruitsCarmella(){
     const browser = await puppeteer.launch({args: ['--no-sandbox', '--disable-setuid-sandbox']});  // {headless:false}
     
     const page = await browser.newPage();
-    await page.goto(carmella, {waitUntil: 'domcontentloaded'})
+    await page.goto(carmella, {waitUntil: 'load', timeout: 0})
     await page.setViewport({
         width: 1300,
         height: 800
@@ -836,7 +836,7 @@ async function vegetablesCarmella(){
     const browser = await puppeteer.launch({args: ['--no-sandbox', '--disable-setuid-sandbox']});
 
     const page = await browser.newPage();
-    await page.goto(carmella, {waitUntil: 'domcontentloaded'})
+    await page.goto(carmella, {waitUntil: 'load', timeout: 0})
     await page.setViewport({
         width: 1600,
         height: 1000
