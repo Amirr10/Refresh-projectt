@@ -27,9 +27,9 @@ app.get('/socket', (req,res) => {
 })
 
 function callSocket(){
-    io.on('connection', socket => {
-        socket.emit('new-msg', 'message from callSocket')
-    })
+    // io.on('connection', socket => {
+    //     socket.emit('new-msg', 'message from callSocket')
+    // })
 }
 
 
@@ -359,9 +359,9 @@ async function combo(){
     let file = await createExcelFileWithCombine(combineFruitObject, combineVegeObject, combineGreenObject)
     // await printPromise(carmellaVegtables,'carm')
 
-    io.on('connection', socket => {
-        socket.emit('new-msg', 'message from callSocket')
-    })
+    // io.on('connection', socket => {
+    //     socket.emit('new-msg', 'message from callSocket')
+    // })
 
 }
 // combo()
@@ -414,7 +414,7 @@ async function fruitsShookit(){
 
     const browser = await puppeteer.launch({args: ['--no-sandbox', '--disable-setuid-sandbox']});
     const page = await browser.newPage();
-    await page.goto(shookit)
+    await page.goto(shookit, {waitUntil: 'load', timeout: 0})
 
 
     // get name of product
@@ -498,7 +498,7 @@ async function fruitsRefresh(){
 
     const browser = await puppeteer.launch({args: ['--no-sandbox', '--disable-setuid-sandbox']});
     const page = await browser.newPage();
-    await page.goto(refresh)
+    await page.goto(refresh, {waitUntil: 'load', timeout: 0})
 
 
     // get name of product
@@ -563,7 +563,7 @@ async function fruitsCarmella(){
     const browser = await puppeteer.launch({args: ['--no-sandbox', '--disable-setuid-sandbox']});  // {headless:false}
     
     const page = await browser.newPage();
-    await page.goto(carmella)
+    await page.goto(carmella, {waitUntil: 'load', timeout: 0})
     await page.setViewport({
         width: 1300,
         height: 800
@@ -706,7 +706,7 @@ async function vegtablesShookit(){
 
     const browser = await puppeteer.launch({args: ['--no-sandbox', '--disable-setuid-sandbox']});
     const page = await browser.newPage();
-    await page.goto(refresh)
+    await page.goto(refresh, {waitUntil: 'load', timeout: 0})
 
 
     // get name of product
@@ -782,7 +782,7 @@ async function vegtablesRefresh(){
 
     const browser = await puppeteer.launch({args: ['--no-sandbox', '--disable-setuid-sandbox']});
     const page = await browser.newPage();
-    await page.goto(refresh)
+    await page.goto(refresh, {waitUntil: 'load', timeout: 0})
 
 
     // get name of product
@@ -837,7 +837,7 @@ async function vegetablesCarmella(){
     const browser = await puppeteer.launch({args: ['--no-sandbox', '--disable-setuid-sandbox']});
 
     const page = await browser.newPage();
-    await page.goto(carmella)
+    await page.goto(carmella, {waitUntil: 'load', timeout: 0})
     await page.setViewport({
         width: 1600,
         height: 1000
@@ -865,7 +865,7 @@ async function vegetablesCarmella(){
                             clearInterval(timer);
                             resolve();
                         }
-                    }, 320);      
+                    }, 330);      
             });
 
         });
@@ -874,7 +874,6 @@ async function vegetablesCarmella(){
     }
 
 }
-
 
     // get name of product
     const productTitle = await page.$$eval('.no_mobile' , innerText => innerText.map((inr,i) => 
@@ -917,7 +916,20 @@ productPrice.forEach((price,i) => {
     if(productTitle[i] === 'עגבניה אשכולות מובחרת'){
         productTitle[i] = `עגבניה מובחרת`
     }
+    if(`${name[0]} ${name[1]}` === 'פטריות שמפניון'){
+        if(`${name[0]} ${name[1]} ${name[2]}` === 'פטריות שמפניון חומות'){
+            productTitle[i] = ``
+        } else {
+            productTitle[i] = `שמפניון (מארז)`
+        }
+        console.log("Mushroom")
+    }
+    if(`${name[0]} ${name[1]}` === 'צמד שמפניון'){
+        productTitle[i] = `דואט פטריות (מארז)`
+        console.log("Mushroom12")
+    }
 
+    // שמפניון (מארז)
 
     let temp = {}
 
@@ -932,9 +944,6 @@ productPrice.forEach((price,i) => {
     }
 
   })
-
-
-        
 
 
 
@@ -962,7 +971,7 @@ async function greensRefresh(){
 
     const browser = await puppeteer.launch({args: ['--no-sandbox', '--disable-setuid-sandbox']});
     const page = await browser.newPage();
-    await page.goto(refresh)
+    await page.goto(refresh, {waitUntil: 'load', timeout: 0})
 
 
     // get name of product
@@ -1027,7 +1036,7 @@ async function greensShookit(){
 
     const browser = await puppeteer.launch({args: ['--no-sandbox', '--disable-setuid-sandbox']});
     const page = await browser.newPage();
-    await page.goto(refresh)
+    await page.goto(refresh, {waitUntil: 'load', timeout: 0})
 
 
     // get name of product
