@@ -124,14 +124,9 @@ let vegeListRefresh = [
 
 app.get('/check', async (req,res) => {
 
-    try {
-        let obj = await vegetablesCarmella()
+    let obj = await fruitsRefresh()
 
-        res.json(obj)
-
-    } catch (error) {
-        console.log(error)
-    }
+    res.json(obj)
     
 })
 
@@ -204,10 +199,10 @@ async function callProgram(){
 
          let file = await createExcelFileWithCombine(combineFruitObject, combineVegeObject, combineGreenObject)
 
-         await io.on('connection', socket => {
+          await io.on('connection', socket => {
             socket.emit('new-msg', 'message from callProgram')
         })
-    // let file = await createExcelFileWithCombine(allFruits, allVeges, allGreens)
+        // let file = await createExcelFileWithCombine(allFruits, allVeges, allGreens)
 }
 
 
@@ -232,9 +227,6 @@ async function checkEqualItems(listRefresh){
     const carmellaList = await vegetablesCarmella()
     const vegeList = await vegtablesShookit()
     const refreshObjects = await vegtablesRefresh()
-    // const vegeList = await fruitsShookit()
-    // const vegeList = await fruitsCarmella()
-    // vegeList.forEach((el,i) => console.log(el.name, i ))
     
     let set = new Set()
 
@@ -278,8 +270,6 @@ async function checkEqualItems(listRefresh){
         }
     })
 
-        let counter = 1
-
     return objArr
 }
 // checkEqualItems(vegeListRefresh)
@@ -306,7 +296,8 @@ async function testProg(){
 
     let file = await createExcelFileWithCombine(combineFruitObject, combineVegeObject, combineGreenObject)
     console.log("Done create excel")
-        //  await io.on('connection', socket => {
+
+        // await io.on('connection', socket => {
         //     socket.emit('new-msg', 'message from callProgram')
         // })
 }
@@ -336,7 +327,7 @@ app.get("/test2", async (req,res) => {
 
     let func = testProg()
 
-    res.json('test2');
+    res.json('json');
     // res.download('Excel.xlsx')
 })
 
@@ -531,6 +522,12 @@ async function fruitsRefresh(){
             let num = price * 10
             price = `${num}`
         }
+
+
+        if(price === undefined){
+            price = '0'
+        }
+
 
         let temp = {}
         temp.name = name
@@ -1401,9 +1398,9 @@ function createExcelFileWithCombine(fruitsObjects, vegeObjects, greensObjects){
     console.log('done')
     workbook.write('Excel.xlsx');
 
-    io.on('connection', socket => {
-        socket.emit('new-msg', 'message from callProgram')
-    })///////////
+    // io.on('connection', socket => {
+    //     socket.emit('new-msg', 'message from callProgram')
+    // })
 }
 
 

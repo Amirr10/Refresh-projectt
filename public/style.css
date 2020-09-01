@@ -11,19 +11,20 @@
 
 .form {
     display: flex;
-    /* align-items: center; */
+    align-items: center;
     justify-content: center;
+    flex-direction: column;
     height: 100%;
     width: 50%;
     margin: auto;
 }
 
 .btn {
-    margin-top: 20%;
+    /* margin-top: 20%; */
     text-align: center;
     width: 80px;
     height: 7vh;
-    background-color: orange;
+    background-color: tomato;
     border-radius: 10px;
     border: none;
     color: white;
@@ -32,5 +33,13 @@
 }
 
 .sec-btn {
+    width: 80px;
+    height: 7vh;
+    background-color: rgb(36, 185, 44);
+    border-radius: 10px;
+    border: none;
+    color: white;
+    cursor: pointer;
+    margin-top: 30px;
     visibility: hidden;
 }
