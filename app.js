@@ -562,7 +562,7 @@ async function fruitsCarmella(){
     const browser = await puppeteer.launch({args: ['--no-sandbox', '--disable-setuid-sandbox']});  // {headless:false}
     
     const page = await browser.newPage();
-    await page.goto(carmella, {waitUntil: 'load', timeout: 0})
+    await page.goto(carmella)
     await page.setViewport({
         width: 1300,
         height: 800
@@ -836,7 +836,7 @@ async function vegetablesCarmella(){
     const browser = await puppeteer.launch({args: ['--no-sandbox', '--disable-setuid-sandbox']});
 
     const page = await browser.newPage();
-    await page.goto(carmella, {waitUntil: 'load', timeout: 0})
+    await page.goto(carmella)
     await page.setViewport({
         width: 1600,
         height: 1000
@@ -845,6 +845,9 @@ async function vegetablesCarmella(){
     await scrollDownCarmella()
 
     async function scrollDownCarmella(){
+
+        try {
+
         await page.evaluate(async () => {
             await new Promise((resolve, reject) => {
                 let totalHeight = 0;
@@ -865,7 +868,11 @@ async function vegetablesCarmella(){
             });
 
         });
+    } catch (error) {
+         console.log('error', error)   
     }
+
+}
 
 
     // get name of product
