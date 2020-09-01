@@ -557,6 +557,8 @@ async function fruitsCarmella(){
 
     let carmella = `https://www.carmella.co.il/product-category/%d7%a4%d7%99%d7%a8%d7%95%d7%aa-%d7%a8%d7%90%d7%a9%d7%99/`
 
+    try {
+
     const browser = await puppeteer.launch({args: ['--no-sandbox', '--disable-setuid-sandbox']});  // {headless:false}
     
     const page = await browser.newPage();
@@ -687,6 +689,12 @@ async function fruitsCarmella(){
 
     browser.close()
     return sortObj  
+
+    } catch (error) {
+        console.log('error occure', error)
+    }
+
+
 }
 
 
@@ -822,8 +830,10 @@ async function vegetablesCarmella(){
 
     let carmella = `https://www.carmella.co.il/product-category/%d7%99%d7%a8%d7%a7%d7%95%d7%aa/`
 
-    const browser = await puppeteer.launch({args: ['--no-sandbox', '--disable-setuid-sandbox']});
 
+    try {
+        
+    const browser = await puppeteer.launch({args: ['--no-sandbox', '--disable-setuid-sandbox']});
 
     const page = await browser.newPage();
     await page.goto(carmella)
@@ -913,7 +923,11 @@ productPrice.forEach((price,i) => {
         obj.vegetables.push(temp)
     }
 
-})
+  })
+
+
+        
+
 
 
     let sortObj = obj.vegetables.sort((a,b) => a.name.localeCompare(b.name))
@@ -922,6 +936,12 @@ productPrice.forEach((price,i) => {
 
     browser.close()
     return obj.vegetables  
+
+    } catch (error) {
+        console.log("Error Occurred", error)
+    } // end of try catch
+
+
 }
 // vegetablesCarmella()
 
