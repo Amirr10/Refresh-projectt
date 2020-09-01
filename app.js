@@ -14,9 +14,9 @@ const fs = require('fs');
 app.use(express.static('public'))
 app.use(cors())
 
-io.on('connection', socket => {
-    socket.emit('welcome-msg', 'Hello Socket')
-})
+// io.on('connection', socket => {
+//     socket.emit('welcome-msg', 'Hello Socket')
+// })
 
 
 app.get('/socket', (req,res) => {
@@ -153,9 +153,9 @@ app.get('/promise', async (req,res) => {
 
     //   res.download('Excel.xlsx')
     //  res.send()
-    await io.on('connection', socket => {
-        socket.emit('new-msg', 'message from callSocket')
-    })
+    // await io.on('connection', socket => {
+    //     socket.emit('new-msg', 'message from callSocket')
+    // })
 
     } catch (error) {
         console.log(error)
@@ -200,9 +200,9 @@ async function callProgram(){
 
          let file = await createExcelFileWithCombine(combineFruitObject, combineVegeObject, combineGreenObject)
 
-          await io.on('connection', socket => {
-            socket.emit('new-msg', 'message from callProgram')
-        })
+        //   await io.on('connection', socket => {
+        //     socket.emit('new-msg', 'message from callProgram')
+        // })
         // let file = await createExcelFileWithCombine(allFruits, allVeges, allGreens)
 }
 
