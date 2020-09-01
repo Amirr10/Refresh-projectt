@@ -125,6 +125,8 @@ let vegeListRefresh = [
 app.get('/check', async (req,res) => {
 
     let obj = await vegetablesCarmella()
+    // let obj = await vegtablesShookit()
+
 
     res.json(obj)
     
@@ -741,10 +743,19 @@ async function vegtablesShookit(){
         }
 
         let name = productTitle[index]
+        let arrName = productTitle[index].split(' ')
 
         //change names of vegetables
-        if(name === 'מלפפון'){
-            name = `מלפפון מובחר`
+        if(`${arrName[0]}` === 'מלפפון'){
+            if(`${arrName[1]}` === `בייבי`){
+                name = `מלפפון בייבי`
+            } else {
+                name = `מלפפון מובחר`
+            }
+        }
+
+        if(name === 'פטריות שמפיניון'){
+            name = `שמפניון (מארז)`
         }
         if(name === 'סלק'){
             name = `סלק אדום`
@@ -908,8 +919,12 @@ productPrice.forEach((price,i) => {
     } 
 
     let name = productTitle[i].split(' ')
+    // console.log(name)
 
     //fix name of vegetable
+    if(`${name[0]} ${name[1]}` === `אבוקדו 'גליל'`){
+        productTitle[i] = `אבוקדו`
+    }
     if(productTitle[i] === 'כרוב אדום'){
         productTitle[i] = `כרוב סגול`
     }
@@ -922,13 +937,24 @@ productPrice.forEach((price,i) => {
         } else {
             productTitle[i] = `שמפניון (מארז)`
         }
-        console.log("Mushroom")
     }
     if(`${name[0]} ${name[1]}` === 'צמד שמפניון'){
         productTitle[i] = `דואט פטריות (מארז)`
-        console.log("Mushroom12")
     }
 
+    if(`${name[0]} ${name[1]}` === 'פטריות מיקס\n(מארז)\n400'){
+        productTitle[i] = `מיקס פטריות (מארז)`
+        let num = prices[i] / 2
+        prices[i] = `${num}`
+    }
+    if(`${name[0]} ${name[1]}` === 'תירס "סוויטי"'){
+        productTitle[i] = `תירס (מארז)`
+    }
+
+
+    // אבוקדו 'גליל'
+    // "סוויטי"
+// פטריות מיקס
     // שמפניון (מארז)
 
     let temp = {}
