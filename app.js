@@ -176,12 +176,13 @@ app.get('/promiseAll', async (req,res) => {
 
 
 async function callProgram(){
+    let carmellaVege = await vegetablesCarmella()
 
     let [shookitFruits, refreshFruits, carmellaFruits,
-         shookitVege, refreshVege, carmellaVege,
+         shookitVege, refreshVege,
          shookitGreen, refreshGreen]
         = await Promise.all([fruitsShookit(), await fruitsRefresh(), fruitsCarmella(),
-                            vegtablesShookit(), await vegtablesRefresh(), vegetablesCarmella(),
+                            vegtablesShookit(), await vegtablesRefresh(),
                             greensShookit(), await greensRefresh()]);  
     
     // let [allFruits, allVeges, allGreens] = await Promise.all(
