@@ -1,8 +1,8 @@
 const express = require('express');
 const excel = require('excel4node');
 const app = express()
-    , server = require('http').createServer(app)
-    , io = require('socket.io').listen(server);
+    , server = require('http').createServer(app);
+    // , io = require('socket.io').listen(server);
 
 const workbook = new excel.Workbook();
 const puppeteer = require('puppeteer');
