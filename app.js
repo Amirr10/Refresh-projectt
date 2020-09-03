@@ -535,7 +535,7 @@ async function vegtablesRefresh(){
 
     try {
 
-    const browser = await puppeteer.launch({headless:'true'}); //{args: ['--no-sandbox', '--disable-setuid-sandbox']}
+    const browser = await puppeteer.launch({args: ['--no-sandbox', '--disable-setuid-sandbox']}); //{args: ['--no-sandbox', '--disable-setuid-sandbox']}
     const page = await browser.newPage();
     await page.goto(refresh, {waitUntil: 'load', timeout: 0})
 
