@@ -20,13 +20,15 @@ app.get('/socket', (req,res) => {
 
     callSocket()
 
-    res.json('nice')
+    res.json('socket')
 })
 
 
 app.get('/check', async (req,res) => {
 
-    let obj = await greensShookit()
+    let obj = await fruitsShookit()
+
+    // let obj = await greensShookit()
     // let obj = await vegetablesCarmella()
     // let obj = await vegtablesShookit()
     // let obj = await vegtablesRefresh()
@@ -62,15 +64,15 @@ app.get('/promise', async (req,res) => {
 })
 
 
+
+
 app.get('/promiseAll', async (req,res) => {
 
     // let fruits = await callProgram()
     let fruits = callProgram()
   
     res.json('Good')
-    // res.download('Excel.xlsx')
 })
-
 
 
 async function callProgram(){
@@ -109,6 +111,15 @@ function printPromise(shookitFruits,name){
 }
 
 
+//get fruits from shookit
+app.get("/test2", async (req,res) => {
+
+    let func = testProg()
+
+    res.json('json');
+})
+
+
 async function testProg(){
 
     let shookitFruits = await fruitsShookit()
@@ -130,16 +141,6 @@ async function testProg(){
     let file = await createExcelFileWithCombine(combineFruitObject, combineVegeObject, combineGreenObject)
     console.log("Done create excel")
 }
-
-
-//get fruits from shookit
-app.get("/test2", async (req,res) => {
-
-    let func = testProg()
-
-    res.json('json');
-    // res.download('Excel.xlsx')
-})
 
 
 //combine refresh and shookit objects to one row
@@ -213,8 +214,12 @@ async function fruitsShookit(){
         //get unit type
         let regex3 = /ק\"ג|מארז|יחידה/
 
+        let unit = productPrice[index].split(' ')
+        let unitOrWeight = unit[unit.length-1].replace(")","")
+        // console.log(unitOrWeight, index)
+
         let weight = productPrice[index].match(regex)
-        let unitOrWeight = productPrice[index].match(regex3)
+        // let unitOrWeight = productPrice[index].match(regex3)
         let price = productPrice[index].match(regex2)
 
         if(price === null){
@@ -238,11 +243,16 @@ async function fruitsShookit(){
                 name = `תפוח סמית`
         }
 
+        if(unitOrWeight === undefined || unitOrWeight === null){
+            console.log('Null')
+            unitOrWeight = '0'
+        }
+        
 
         let temp = {}
         temp.name = name
         temp.price = price
-        temp.type = unitOrWeight[0]
+        temp.type =  unitOrWeight
         temp.category = 'Fruit'
         temp.company = 'shookit'
 
@@ -1082,37 +1092,37 @@ function createExcelFileWithCombine(fruitsObjects, vegeObjects, greensObjects){
 
 
 
-function setExcelRowColByCategory(worksheet, categoryObjects, startIndex){
+function setExcelRowColByCategory(worksheet, categoryObjects, startIndex) {
 
     let style = workbook.createStyle({
         font: {
-          color: 'black',
-          size: 12,
-          width:15
+            color: 'black',
+            size: 12,
+            width: 15
         },
         alignment: {
             horizontal: 'center',
             vertical: 'center'
         },
         numberFormat: '##0.00; ##0.00; -'
-      });
+    });
 
 
     let totalLength = startIndex //total length of rows
 
     //display fruits in rows
-    for (let i = 0; i < categoryObjects.length; i++) {        
+    for (let i = 0; i < categoryObjects.length; i++) {
         const element = categoryObjects[i];
         for (let j = 0; j < element.length; j++) {
 
             //check if the 3 companys have the same item or just 2 of them
-            if(element.length === 2){
+            if (element.length === 2) {
                 // let num = parseInt
-                if(j === 0){
+                if (j === 0) {
                     worksheet.cell(startIndex + i + 2, 1).string(element[j].name).style(style)
                     worksheet.cell(startIndex + i + 2, 2).string(element[j].type).style(style)
                     worksheet.cell(startIndex + i + 2, 3).string(element[j].price).style(style)
-                } else if(j === 1 && element[j].company === 'shookit'){
+                } else if (j === 1 && element[j].company === 'shookit') {
                     worksheet.cell(startIndex + i + 2, 4).string(element[j].name).style(style)
                     worksheet.cell(startIndex + i + 2, 5).string(element[j].type).style(style)
                     worksheet.cell(startIndex + i + 2, 6).string(element[j].price).style(style)
@@ -1121,7 +1131,7 @@ function setExcelRowColByCategory(worksheet, categoryObjects, startIndex){
                     worksheet.cell(startIndex + i + 2, 8).string('-').style(style)
                     worksheet.cell(startIndex + i + 2, 9).string('-').style(style)
 
-                } else if(j === 1 && element[j].company === 'carmella') {
+                } else if (j === 1 && element[j].company === 'carmella') {
 
                     worksheet.cell(startIndex + i + 2, 4).string('-').style(style)
                     worksheet.cell(startIndex + i + 2, 5).string('-').style(style)
@@ -1136,21 +1146,21 @@ function setExcelRowColByCategory(worksheet, categoryObjects, startIndex){
                     worksheet.cell(startIndex + i + 2, 1).string(element[j].name).style(style)
                     worksheet.cell(startIndex + i + 2, 2).string(element[j].type).style(style)
                     worksheet.cell(startIndex + i + 2, 3).string(element[j].price).style(style)
-                } 
+                }
                 else if (j === 1 && element[j].company === 'shookit') {
                     worksheet.cell(startIndex + i + 2, 4).string(element[j].name).style(style)
                     worksheet.cell(startIndex + i + 2, 5).string(element[j].type).style(style)
                     worksheet.cell(startIndex + i + 2, 6).string(element[j].price).style(style)
-                } else if (j === 2 && element[j].company === 'carmella'){
+                } else if (j === 2 && element[j].company === 'carmella') {
                     worksheet.cell(startIndex + i + 2, 7).string(element[j].name).style(style)
                     worksheet.cell(startIndex + i + 2, 8).string(element[j].type).style(style)
                     worksheet.cell(startIndex + i + 2, 9).string(element[j].price).style(style)
                 }
+            }
         }
-    }
 
-    totalLength++
-  }
+        totalLength++
+    }
 
     workbook.write('Excel.xlsx');
     return totalLength
@@ -1237,27 +1247,9 @@ let str = `(₪34.9 / ק"ג ק"ג) `
 let str2 = 'יחידה - 44.9'
 let str3 = 'מארז - 29.9'
 let str4 = "39.9 , 34.9"
-
-
 let str5 = "תפוח עץ - מוזהב"
 let reg6 = /[^- עץ]+/g
-let result6 = str5.match(reg6)
-console.log(result6)
-
-let result = str.match(reg3)
-let result2 = str2.match(reg3)
-let result3 = str3.match(reg3)
-
-let result4 = str.match(reg4)
-let result5 = str4.match(reg5)
 
 
 
-
-
-console.log(result)
-console.log(result2)
-console.log(result3)
-console.log(result4)
-console.log(result5)
 
