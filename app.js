@@ -595,14 +595,14 @@ async function vegtablesRefresh(){
     let sortObj = obj.vegetables.sort((a,b) => a.name.localeCompare(b.name))
     // sortObj.forEach(el => console.log(`'${el.name}',`))
 
+    console.log(sortObj.length,'vegtablesRefresh done')
     browser.close()
+    return sortObj 
 
     } catch (error) {
         console.log(error)    
     }
 
-    console.log(sortObj.length,'vegtablesRefresh done')
-    return sortObj 
 }
 // vegtablesRefresh()
 
