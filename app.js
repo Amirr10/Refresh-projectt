@@ -14,9 +14,6 @@ const fs = require('fs');
 app.use(express.static('public'))
 app.use(cors())
 
-// io.on('connection', socket => {
-//     socket.emit('welcome-msg', 'Hello Socket')
-// })
 
 
 app.get('/socket', (req,res) => {
@@ -25,12 +22,6 @@ app.get('/socket', (req,res) => {
 
     res.json('nice')
 })
-
-function callSocket(){
-    // io.on('connection', socket => {
-    //     socket.emit('new-msg', 'message from callSocket')
-    // })
-}
 
 
 app.get('/client', (req,res) => {
@@ -41,95 +32,14 @@ app.get('/client', (req,res) => {
 })
 
 
-let fruitListRefresh = [
-"אבטיח שלם",
-"אגס",
-"אוכמניות",
-"אננס",
-"אפרסק",
-"בננה",
-"דובדבן",
-"חצי אבטיח",
-"ליים",
-"מארז תמר מג'הול - 400 גרם",
-"מלון כתום",
-"מלון ספרדי מתוק",
-"מנגו",
-"משמש בלדי",
-"נקטרינה",
-"ענבים אדומים",
-"ענבים ירוקים",
-"ענבים שחורים",
-"קיווי ירוק",
-"קיווי צהוב",
-"קלמנטינה",
-"רבע אבטיח",
-"שזיף אדום",
-"שזיף צהוב",
-"שסק",
-"תות",
-"תמר מג'הול אורגני (מארז 1 ק\"ג)",
-"תפוז למיץ",
-"תפוח חרמון",
-"תפוח סמית",
-"תפוח פינק ליידי",
-]
-
-let vegeListRefresh = [
-    'אבוקדו',
-    'בטטה',
-    'בצל',
-    'בצל סגול',
-    'גזר',
-    'דואט פטריות',
-    'חציל',
-    'כרוב לבן',
-    'כרוב סגול',
-    'לימון',
-    'מיקס פטריות',
-    'מלפפון מובחר',
-    'מלפפון מיני',
-    'סלק',
-    'עגבניה',
-    'עגבניות מיובשות',
-    'פטריות מגה פורטבלו',
-    'פטריות פורטובלו',
-    'פלפל אדום',
-    'פלפל ירוק',
-    'פלפל ירוק חריף',
-    'פלפל צ\'ילי',
-    'פלפל צהוב',
-    'פלפלונים מתוקים טינקרבל',
-    'צנונית',
-    'קולורבי',
-    'קישוא',
-    'ראש שום',
-    'שום ארוז',
-    'שום קלוף',
-    'שומר',
-    'שמפניון',
-    'שעועית ירוקה',
-    'שרי אדום',
-    'שרי טריפל',
-    'שרי צהוב',
-    'שרי שוקו',
-    'תירס',
-    'תפוח אדמה אדום',
-    'תפוח אדמה לבן'
-]
-
-
-
-
-
 app.get('/check', async (req,res) => {
 
-    let obj = await vegetablesCarmella()
+    let obj = await greensShookit()
+    // let obj = await vegetablesCarmella()
     // let obj = await vegtablesShookit()
+    // let obj = await vegtablesRefresh()
 
-
-    res.json(obj)
-    
+    res.json(obj)    
 })
 
 
@@ -137,27 +47,21 @@ app.get('/check', async (req,res) => {
 app.get('/promise', async (req,res) => {
 
     try {
-        let [shookitFruits, refreshFruits, carmellaFruits, 
-            shookitVege, refreshVege, carmellaVege,
-            shookitGreen, refreshGreen] 
-           = await Promise.all([fruitsShookit(),  fruitsRefresh(), fruitsCarmella(),
-                            vegtablesRefresh(), vegtablesRefresh(), vegetablesCarmella(),
-                            greensShookit(), greensRefresh()]);
-   
-     let [allFruits, allVeges, allGreens] = await Promise.all(
-               [combineFruitsOrVegetables(shookitFruits, refreshFruits, carmellaFruits),
-                combineFruitsOrVegetables(shookitVege, refreshVege, carmellaVege),
-                combineFruitsOrVegetables(shookitGreen, refreshGreen, carmellaVege)]);
+        
+        let [shookitFruits, refreshFruits, carmellaFruits] = await Promise.all([fruitsShookit(), fruitsRefresh(), fruitsCarmella()])
+        let [shookitVege, refreshVege, carmellaVege] = await Promise.all([vegtablesShookit(), vegtablesRefresh(), vegetablesCarmella()])
+        let [shookitGreen, refreshGreen] = await Promise.all([greensShookit(), greensRefresh()])
+
+
+        let [allFruits, allVeges, allGreens] = await Promise.all(
+               [combineFruitsOrVegetables(shookitFruits, await refreshFruits, carmellaFruits),
+                combineFruitsOrVegetables(shookitVege, await refreshVege, carmellaVege),
+                combineFruitsOrVegetables(shookitGreen, await refreshGreen, carmellaVege)]);
    
    
      let file = await createExcelFileWithCombine(allFruits, allVeges, allGreens)
    
-
-    //   res.download('Excel.xlsx')
-    //  res.send()
-    // await io.on('connection', socket => {
-    //     socket.emit('new-msg', 'message from callSocket')
-    // })
+    res.json("/promise")
 
     } catch (error) {
         console.log(error)
@@ -187,10 +91,6 @@ async function callProgram(){
                             vegtablesShookit(), await vegtablesRefresh(),
                             greensShookit(), await greensRefresh()]);  
     
-    // let [allFruits, allVeges, allGreens] = await Promise.all(
-    //     [combineFruitsOrVegetables(shookitFruits, refreshFruits, carmellaFruits),
-    //      combineFruitsOrVegetables(shookitVege, refreshVege, carmellaVege),
-    //      combineFruitsOrVegetables(shookitGreen, refreshGreen, carmellaVege)]);
 
          let combineVegeObject = await combineFruitsOrVegetables(shookitVege, refreshVege, carmellaVege)
          let combineFruitObject = await combineFruitsOrVegetables(shookitFruits, refreshFruits, carmellaFruits)
@@ -202,9 +102,6 @@ async function callProgram(){
 
          let file = await createExcelFileWithCombine(combineFruitObject, combineVegeObject, combineGreenObject)
 
-        //   await io.on('connection', socket => {
-        //     socket.emit('new-msg', 'message from callProgram')
-        // })
         // let file = await createExcelFileWithCombine(allFruits, allVeges, allGreens)
 }
 
@@ -217,65 +114,9 @@ app.get('/download', (req,res) => {
 })
 
 
-
 function printPromise(shookitFruits,name){
     console.log(shookitFruits.length, name)
 }
-
-
-async function checkEqualItems(listRefresh){
-
-    let objArr = []
-    let combineObj = []
-    const carmellaList = await vegetablesCarmella()
-    const vegeList = await vegtablesShookit()
-    const refreshObjects = await vegtablesRefresh()
-    
-    let set = new Set()
-
-    listRefresh.forEach((item,j) => {
-        let bool = false
-        let name = item.split(' ')
-
-
-        for (let i = 0; i < vegeList.length; i++) {
-            let vegeName = vegeList[i].name.split(' ')
-
-            //if length of the name is only one and its equal to one on the list
-            if (name[0] === vegeName[0] && vegeName.length > 1 && name.length > 1) {
-                if (name[1] === vegeName[1] && vegeName.length > 2 && name.length > 2) {
-                    if(name[2] === vegeName[2]){
-                        set.add(`${name[0]} ${name[1]} ${name[2]}`)//
-                        let obj = [refreshObjects[j], vegeList[i]]//
-                        objArr.push(obj)//
-                        break;
-                    }
-                } else if (name[1] === vegeName[1] ){
-                    set.add(`${name[0]} ${name[1]}`)
-                    let obj = [refreshObjects[j], vegeList[i]]//
-                    objArr.push(obj)//
-                    break;
-                }
-            } else if (name[0] === vegeName[0] && name.length === 1) {
-                set.add(`${name[0]}`)
-                let obj = [refreshObjects[j], vegeList[i]]//
-                objArr.push(obj)//
-                break;
-            }
-
-
-        //     let thirdObj = compareThirdLists(refreshObjects[i], carmellaList)
-
-        //     if(obj !== null  && Object.keys(thirdObj).length > 0) { 
-        //         let newArray = [...obj, thirdObj]
-        //        combineObj.push(newArray)
-        //    }
-        }
-    })
-
-    return objArr
-}
-// checkEqualItems(vegeListRefresh)
 
 
 async function testProg(){
@@ -296,37 +137,13 @@ async function testProg(){
     let combineFruitObject = await combineFruitsOrVegetables(shookitFruits, refreshFruits, carmellaFruits)
     let combineGreenObject = await combineFruitsOrVegetables(shookitGreen, refreshGreen, carmellaGreen)
 
-
     let file = await createExcelFileWithCombine(combineFruitObject, combineVegeObject, combineGreenObject)
     console.log("Done create excel")
-
-        // await io.on('connection', socket => {
-        //     socket.emit('new-msg', 'message from callProgram')
-        // })
 }
 
 
 //get fruits from shookit
 app.get("/test2", async (req,res) => {
-
-    // let shookitFruits = await fruitsShookit()
-    // let refreshFruits = await fruitsRefresh()
-    // let carmellaFruits = await fruitsCarmella()
-
-    // let shookitVegtables = await vegtablesShookit()
-    // let refreshVegtables = await vegtablesRefresh()
-    // let carmellaVegtables = await vegetablesCarmella()
-    
-    // let shookitGreen = await greensShookit()
-    // let refreshGreen = await greensRefresh()
-    // let carmellaGreen = await vegetablesCarmella()
-  
-    // let combineVegeObject = await combineFruitsOrVegetables(shookitVegtables, refreshVegtables, carmellaVegtables)
-    // let combineFruitObject = await combineFruitsOrVegetables(shookitFruits, refreshFruits, carmellaFruits)
-    // let combineGreenObject = await combineFruitsOrVegetables(shookitGreen, refreshGreen, carmellaGreen)
-
-
-    // let file = await createExcelFileWithCombine(combineFruitObject, combineVegeObject, combineGreenObject)
 
     let func = testProg()
 
@@ -334,39 +151,6 @@ app.get("/test2", async (req,res) => {
     // res.download('Excel.xlsx')
 })
 
-
-async function combo(){
-
-    let shookitFruits = await fruitsShookit()
-    let refreshFruits = await fruitsRefresh()
-    let carmellaFruits = await fruitsCarmella()
-
-    // let shookitVegtables = await vegtablesShookit()
-    // let refreshVegtables = await vegtablesRefresh()
-    // let carmellaVegtables = await vegetablesCarmella()
-
-    // let shookitGreen = await greensShookit()
-    // let refreshGreen = await greensRefresh()
-    // let carmellaGreen = await vegetablesCarmella()
-
-    // let combineVegeObject = await combineFruitsOrVegetables(shookitVegtables, refreshVegtables, carmellaVegtables)
-    let combineFruitObject = await combineFruitsOrVegetables(shookitFruits, refreshFruits, carmellaFruits)
-    
-    // let combineGreenObject = await combineFruitsOrVegetables(shookitGreen, refreshGreen, carmellaGreen)
-    let combineGreenObject = []
-    let combineVegeObject = []
-
-
-
-    let file = await createExcelFileWithCombine(combineFruitObject, combineVegeObject, combineGreenObject)
-    // await printPromise(carmellaVegtables,'carm')
-
-    // io.on('connection', socket => {
-    //     socket.emit('new-msg', 'message from callSocket')
-    // })
-
-}
-// combo()
 
 //combine refresh and shookit objects to one row
 async function combineFruitsOrVegetables(shookitFruits, refreshFruits, carmellaFruits){
@@ -404,8 +188,6 @@ async function combineFruitsOrVegetables(shookitFruits, refreshFruits, carmellaF
     }
 
     console.log('combineFruitsOrVegetables done')
-    // console.log()
-
     return combineObj
 }
 
@@ -643,19 +425,15 @@ async function fruitsCarmella(){
         // if(productTitle[i]){
         //     productTitle[i] = 'ענבים שחורים'
         // }
-
-        
-
-        //check for apples types
-            let newName = productTitle[i].split(' ')
-            if(newName[0] === 'תפוח'){
-                if(`${newName[0]} ${newName[2]}` === 'תפוח פינק'){
-                    productTitle[i] = `${newName[0]} ${newName[2]}`
-                }
-                if(`${newName[0]} ${newName[3]}` === `תפוח סמית'`){
-                    productTitle[i] = `תפוח סמית`
-                }
+        let newName = productTitle[i].split(' ')
+        if (newName[0] === 'תפוח') {
+            if (`${newName[0]} ${newName[2]}` === 'תפוח פינק') {
+                productTitle[i] = `${newName[0]} ${newName[2]}`
             }
+            if (`${newName[0]} ${newName[3]}` === `תפוח סמית'`) {
+                productTitle[i] = `תפוח סמית`
+            }
+        }
         
 
 
@@ -673,19 +451,6 @@ async function fruitsCarmella(){
 
     })
 
-       
-        // //check for apples types
-        //     let newName = name[index].split(' ')
-        //     if(newName[0] === 'תפוח'){
-        //         if(`${newName[0]} ${newName[2]}` === 'תפוח פינק'){
-        //             name[index] = `${newName[0]} ${newName[2]}`
-        //         }
-        //         if(`${newName[0]} ${newName[3]}` === `תפוח סמית'`){
-        //             name[index] = `${newName[0]} ${newName[3]}`
-        //         }
-        //     }
-        // }
-
 
     let sortObj = obj.fruits.sort((a,b) => a.name.localeCompare(b.name))
     console.log(sortObj.length,'fruitsCarmella done')
@@ -696,7 +461,6 @@ async function fruitsCarmella(){
     } catch (error) {
         console.log('error occure', error)
     }
-
 
 }
 
@@ -733,14 +497,13 @@ async function vegtablesShookit(){
         let unitOrWeight = productPrice[index].match(regex3)
 
 
-
-        if(price === null){
-            price = 'empty'
-        } else if(price.length === 2){
-            price = price[1]
-        } else {
-            price = price
-        }
+        // if(price === null){
+        //     price = 'empty'
+        // } else if(price.length === 2){
+        //     price = price[1]
+        // } else {
+        //     price = price
+        // }
 
         let name = productTitle[index]
         let arrName = productTitle[index].split(' ')
@@ -763,8 +526,10 @@ async function vegtablesShookit(){
         if(name === 'עגבנייה - אשכולות'){
             name = `עגבניה מובחרת`
         }
+        if(name === 'תפוח אדמה בתפזורת'){
+            name = `תפוח אדמה לבן`
+        }
         
-
 
         let temp = {}
         temp.name = name
@@ -772,7 +537,6 @@ async function vegtablesShookit(){
         temp.type = unitOrWeight
         temp.category = 'Vegetables'
         temp.company = 'shookit'
-
 
         obj.vegetables.push(temp)
     }
@@ -791,11 +555,33 @@ async function vegtablesRefresh(){
 
     let refresh = `https://www.refresh-market.co.il/category/%D7%99%D7%A8%D7%A7%D7%95%D7%AA`
 
-    const browser = await puppeteer.launch({args: ['--no-sandbox', '--disable-setuid-sandbox']});
+    const browser = await puppeteer.launch({headless:'true'}); //{args: ['--no-sandbox', '--disable-setuid-sandbox']}
     const page = await browser.newPage();
     await page.goto(refresh, {waitUntil: 'load', timeout: 0})
 
 
+    async function autoScroll(page){
+        await page.evaluate(async () => {
+            await new Promise((resolve, reject) => {
+                var totalHeight = 0;
+                var distance = 300;
+                var timer = setInterval(() => {
+                    var scrollHeight = document.body.scrollHeight;
+                    window.scrollBy(0, distance);
+                    totalHeight += distance;
+    
+                    if(totalHeight >= scrollHeight){
+                        clearInterval(timer);
+                        resolve();
+                    }
+                }, 100);
+            });
+        });
+    }
+
+    await autoScroll(page);
+
+    
     // get name of product
     const productTitle = await page.$$eval('.item-name' , innerText => innerText.map((inr,i) => 
         inr.innerText
@@ -821,7 +607,6 @@ async function vegtablesRefresh(){
         temp.category = 'Vegetables'
         temp.company = 'refresh'
 
-
         obj.vegetables.push(temp)
     }
 
@@ -837,11 +622,9 @@ async function vegtablesRefresh(){
 
 
 
-
 async function vegetablesCarmella(){
 
     let carmella = `https://www.carmella.co.il/product-category/%d7%99%d7%a8%d7%a7%d7%95%d7%aa/`
-
 
     try {
         
@@ -923,13 +706,17 @@ productPrice.forEach((price,i) => {
 
     //fix name of vegetable
     if(`${name[0]} ${name[1]}` === `אבוקדו 'גליל'`){
-        productTitle[i] = `אבוקדו`
+        productTitle[i] = `אבוקדו בשל`
     }
     if(productTitle[i] === 'כרוב אדום'){
         productTitle[i] = `כרוב סגול`
     }
-    if(productTitle[i] === 'עגבניה אשכולות מובחרת'){
-        productTitle[i] = `עגבניה מובחרת`
+    if(`${name[0]}` === 'עגבניה'){
+        if(`${name[0]} ${name[1]} ${name[2]}` === 'עגבניה אשכולות מובחרת'){
+            productTitle[i] = `עגבניה מובחרת`
+        } else if(`${name[0]} ${name[1]}` === `עגבניה \'מגי\'\n(מארז)\n1.3`) {
+            productTitle[i] = `עגבניה מגי (מארז)`
+        }
     }
     if(`${name[0]} ${name[1]}` === 'פטריות שמפניון'){
         if(`${name[0]} ${name[1]} ${name[2]}` === 'פטריות שמפניון חומות'){
@@ -941,7 +728,6 @@ productPrice.forEach((price,i) => {
     if(`${name[0]} ${name[1]}` === 'צמד שמפניון'){
         productTitle[i] = `דואט פטריות (מארז)`
     }
-
     if(`${name[0]} ${name[1]}` === 'פטריות מיקס\n(מארז)\n400'){
         productTitle[i] = `מיקס פטריות (מארז)`
         let num = prices[i] / 2
@@ -950,12 +736,25 @@ productPrice.forEach((price,i) => {
     if(`${name[0]} ${name[1]}` === 'תירס "סוויטי"'){
         productTitle[i] = `תירס (מארז)`
     }
+    if(`${name[0]} ${name[1]}` === `שום ארוז\n(מארז`){
+        productTitle[i] = `ראש שום`
+        let num = prices[i] / 4
+        unitOrWeight[i] = `ק"ג`
+        prices[i] = `${num}`
+    }
+    if(`${name[0]} ${name[1]} ${name[2]}` === 'סלק אדום ואקום'){
+        productTitle[i] = `סלק בוואקום (מארז)`
+    }
+    if(`${name[0]} ${name[1]}` === 'גזר תפזורת'){
+        productTitle[i] = `גזר`
+    }
+    if(`${name[0]} ${name[1]} ${name[2]}` === 'עגבניות שרי תמר'){
+        productTitle[i] = `סלק בוואקום (מארז)`
+    }
+    if(`${name[0]} ${name[1]} ${name[2]}` === 'פלפל חריף ירוק'){
+        productTitle[i] = `פלפל ירוק חריף`
+    }
 
-
-    // אבוקדו 'גליל'
-    // "סוויטי"
-// פטריות מיקס
-    // שמפניון (מארז)
 
     let temp = {}
 
@@ -972,7 +771,6 @@ productPrice.forEach((price,i) => {
   })
 
 
-
     let sortObj = obj.vegetables.sort((a,b) => a.name.localeCompare(b.name))
     // sortObj.forEach(el => console.log(el))
     console.log(obj.vegetables.length,'vegetablesCarmella done')
@@ -987,7 +785,6 @@ productPrice.forEach((price,i) => {
 
 }
 // vegetablesCarmella()
-
 
 
 
@@ -1032,14 +829,12 @@ async function greensRefresh(){
         }
 
 
-
         let temp = {}
         temp.name = newName
         temp.price = price
         temp.type = "מארז"
         temp.category = 'Greens'
         temp.company = 'refresh'
-
 
         obj.greens.push(temp)
     }
@@ -1080,8 +875,6 @@ async function greensShookit(){
     ))
 
     
-
-
     let obj = { company: "Shookit", greens: [] }
 
     for (let index = 0; index < productTitle.length; index++) {
@@ -1089,17 +882,13 @@ async function greensShookit(){
         let regex2 = /\d+\.\d/g
         let regex3 = /ק\"ג|מארז|יחידה/
 
+
         let price = productPrice[index].match(regex2)
         let unitOrWeight = productPrice[index].match(/[\u0590-\u05fe?!""]+/)
 
 
-        if(price === null){
-            price = 'empty'
-        } else if(price.length === 2){
-            price = price[1]
-        } else {
-            price = price
-        }
+        let splitPrice = productPrice[index].split(' ')
+        let newPrice = splitPrice[0].replace("(₪","")
 
         let name = productTitle[index]
 
@@ -1112,15 +901,13 @@ async function greensShookit(){
         }
 
         
-        
-    
+
         let temp = {}
         temp.name = name
-        temp.price = price
+        temp.price = newPrice
         temp.type = unitOrWeight
         temp.category = 'Greens'
         temp.company = 'shookit'
-
 
         obj.greens.push(temp)
     }
@@ -1204,7 +991,6 @@ function compareThirdLists(productRefresh, carmellaList) {
 
 
     }
-
     // console.log(carmellaObj,'carObj')
     return carmellaObj
 }
@@ -1287,157 +1073,12 @@ function createExcelFileWithCombine(fruitsObjects, vegeObjects, greensObjects){
     worksheet.cell(1, 13).string('אחוז מכרמלה').style(styleDiff)
 
 
-    //display fruits in rows
-    for (let i = 0; i < fruitsObjects.length; i++) {
-        const element = fruitsObjects[i];
-        for (let j = 0; j < element.length; j++) {
+    let length = 0
 
-            //check if the 3 companys have the same item or just 2 of them
-            if(element.length === 2){
-                // let num = parseInt
-                if(j === 0){
-                    worksheet.cell(i + 2, 1).string(element[j].name).style(style)
-                    worksheet.cell(i + 2, 2).string(element[j].type).style(style)
-                    worksheet.cell(i + 2, 3).string(element[j].price).style(style)
-                } else if(j === 1 && element[j].company === 'shookit'){
-                    worksheet.cell(i + 2, 4).string(element[j].name).style(style)
-                    worksheet.cell(i + 2, 5).string(element[j].type).style(style)
-                    worksheet.cell(i + 2, 6).string(element[j].price).style(style)
-
-                    worksheet.cell(i + 2, 7).string('-').style(style)
-                    worksheet.cell(i + 2, 8).string('-').style(style)
-                    worksheet.cell(i + 2, 9).string('-').style(style)
-
-                } else if(j === 1 && element[j].company === 'carmella') {
-
-                    worksheet.cell(i + 2, 4).string('-').style(style)
-                    worksheet.cell(i + 2, 5).string('-').style(style)
-                    worksheet.cell(i + 2, 6).string('-').style(style)
-
-                    worksheet.cell(i + 2, 7).string(element[j].name).style(style)
-                    worksheet.cell(i + 2, 8).string(element[j].type).style(style)
-                    worksheet.cell(i + 2, 9).string(element[j].price).style(style)
-                }
-            } else if (element.length === 3) {
-                if (j === 0) {
-                    worksheet.cell(i + 2, 1).string(element[j].name).style(style)
-                    worksheet.cell(i + 2, 2).string(element[j].type).style(style)
-                    worksheet.cell(i + 2, 3).string(element[j].price).style(style)
-                } 
-                else if (j === 1 && element[j].company === 'shookit') {
-                    worksheet.cell(i + 2, 4).string(element[j].name).style(style)
-                    worksheet.cell(i + 2, 5).string(element[j].type).style(style)
-                    worksheet.cell(i + 2, 6).string(element[j].price).style(style)
-                } else if (j === 2 && element[j].company === 'carmella'){
-                    worksheet.cell(i + 2, 7).string(element[j].name).style(style)
-                    worksheet.cell(i + 2, 8).string(element[j].type).style(style)
-                    worksheet.cell(i + 2, 9).string(element[j].price).style(style)
-                }
-        }
-    }
-}
-
-
-    //display vegetables in rows
-    let fruitLength = fruitsObjects.length + 2
-    for (let i = 0; i < vegeObjects.length; i++) {
-        const element = vegeObjects[i];
-        for (let j = 0; j < element.length; j++) {
-
-            //check if the 3 companys have the same item or just 2 of them
-            if(element.length === 2){
-                if(j === 0){
-                    worksheet.cell(fruitLength + i, 1).string(element[j].name).style(style)
-                    worksheet.cell(fruitLength + i, 2).string(element[j].type).style(style)
-                    worksheet.cell(fruitLength + i, 3).string(element[j].price).style(style)
-                } else if(j === 1 && element[j].company === 'shookit'){
-                    worksheet.cell(fruitLength + i, 4).string(element[j].name).style(style)
-                    worksheet.cell(fruitLength + i, 5).string(element[j].type).style(style)
-                    worksheet.cell(fruitLength + i, 6).string(element[j].price).style(style)
-
-                    worksheet.cell(fruitLength + i, 7).string('-').style(style)
-                    worksheet.cell(fruitLength + i, 8).string('-').style(style)
-                    worksheet.cell(fruitLength + i, 9).string('-').style(style)///////
-                } else if(j === 1 && element[j].company === 'carmella') {
-
-                    worksheet.cell(fruitLength + i, 4).string('-').style(style)
-                    worksheet.cell(fruitLength + i, 5).string('-').style(style)
-                    worksheet.cell(fruitLength + i, 6).string('-').style(style)
-
-                    worksheet.cell(fruitLength + i, 7).string(element[j].name).style(style)
-                    worksheet.cell(fruitLength + i, 8).string(element[j].type).style(style)
-                    worksheet.cell(fruitLength + i, 9).string(element[j].price).style(style)
-                }
-            } else if (element.length === 3) {
-                if (j === 0) {
-                    worksheet.cell(fruitLength + i, 1).string(element[j].name).style(style)
-                    worksheet.cell(fruitLength + i, 2).string(element[j].type).style(style)
-                    worksheet.cell(fruitLength + i, 3).string(element[j].price).style(style)
-                } 
-                else if (j === 1 && element[j].company === 'shookit') {
-                    worksheet.cell(fruitLength + i, 4).string(element[j].name).style(style)
-                    worksheet.cell(fruitLength + i, 5).string(element[j].type).style(style)
-                    worksheet.cell(fruitLength + i, 6).string(element[j].price).style(style)
-                } else if (j === 2 && element[j].company === 'carmella'){
-                    worksheet.cell(fruitLength + i, 7).string(element[j].name).style(style)
-                    worksheet.cell(fruitLength + i, 8).string(element[j].type).style(style)
-                    worksheet.cell(fruitLength + i, 9).string(element[j].price).style(style)
-                }
-          }
-        }
-    }
-
-
-
-    //display greens in rows
-    let fruitAndVegeLength = fruitsObjects.length + vegeObjects.length + 2
-    for (let i = 0; i < greensObjects.length; i++) {
-        const element = greensObjects[i];
-        for (let j = 0; j < element.length; j++) {
-
-            //check if the 3 companys have the same item or just 2 of them
-            if(element.length === 2){
-                if(j === 0){
-                    worksheet.cell(fruitAndVegeLength + i, 1).string(element[j].name).style(style)
-                    worksheet.cell(fruitAndVegeLength + i, 2).string(element[j].type).style(style)
-                    worksheet.cell(fruitAndVegeLength + i, 3).string(element[j].price).style(style)
-                } else if(j === 1 && element[j].company === 'shookit'){
-                    worksheet.cell(fruitAndVegeLength + i, 4).string(element[j].name).style(style)
-                    worksheet.cell(fruitAndVegeLength + i, 5).string(element[j].type).style(style)
-                    worksheet.cell(fruitAndVegeLength + i, 6).string(element[j].price).style(style)
-
-                    worksheet.cell(fruitAndVegeLength + i, 7).string('-').style(style)
-                    worksheet.cell(fruitAndVegeLength + i, 8).string('-').style(style)
-                    worksheet.cell(fruitAndVegeLength + i, 9).string('-').style(style)
-                } else if(j === 1 && element[j].company === 'carmella') {
-
-                    worksheet.cell(fruitAndVegeLength + i, 4).string('-').style(style)
-                    worksheet.cell(fruitAndVegeLength + i, 5).string('-').style(style)
-                    worksheet.cell(fruitAndVegeLength + i, 6).string('-').style(style)
-
-                    worksheet.cell(fruitAndVegeLength + i, 7).string(element[j].name).style(style)
-                    worksheet.cell(fruitAndVegeLength + i, 8).string(element[j].type).style(style)
-                    worksheet.cell(fruitAndVegeLength + i, 9).string(element[j].price).style(style)
-                }
-            } else if (element.length === 3) {
-                if (j === 0) {
-                    worksheet.cell(fruitAndVegeLength + i, 1).string(element[j].name).style(style)
-                    worksheet.cell(fruitAndVegeLength + i, 2).string(element[j].type).style(style)
-                    worksheet.cell(fruitAndVegeLength + i, 3).string(element[j].price).style(style)
-                } 
-                else if (j === 1 && element[j].company === 'shookit') {
-                    worksheet.cell(fruitAndVegeLength + i, 4).string(element[j].name).style(style)
-                    worksheet.cell(fruitAndVegeLength + i, 5).string(element[j].type).style(style)
-                    worksheet.cell(fruitAndVegeLength + i, 6).string(element[j].price).style(style)
-                } else if (j === 2 && element[j].company === 'carmella'){
-                    worksheet.cell(fruitAndVegeLength + i, 7).string(element[j].name).style(style)
-                    worksheet.cell(fruitAndVegeLength + i, 8).string(element[j].type).style(style)
-                    worksheet.cell(fruitAndVegeLength + i, 9).string(element[j].price).style(style)
-                }
-          }
-        }
-    }
-
+    //build excel files by each category fruits/vegetables/greens
+    length = setExcelRowColByCategory(worksheet, fruitsObjects, length) //(worksheet, categoryObjects, beginingLength)
+    length = setExcelRowColByCategory(worksheet, vegeObjects, length+1)
+    length = setExcelRowColByCategory(worksheet, greensObjects, length+1)
 
 
     //calaulate difference between refresh price to shookit/carmella
@@ -1459,14 +1100,84 @@ function createExcelFileWithCombine(fruitsObjects, vegeObjects, greensObjects){
 
 
     console.log('done')
-    workbook.write('Excel.xlsx');
-
-    // io.on('connection', socket => {
-    //     socket.emit('new-msg', 'message from callProgram')
-    // })
+    // workbook.write('Excel.xlsx');
 }
 
 
+
+function setExcelRowColByCategory(worksheet, categoryObjects, startIndex){
+
+    let style = workbook.createStyle({
+        font: {
+          color: 'black',
+          size: 12,
+          width:15
+        },
+        alignment: {
+            horizontal: 'center',
+            vertical: 'center'
+        },
+        numberFormat: '##0.00; ##0.00; -'
+      });
+
+
+    let totalLength = startIndex //total length of rows
+
+    //display fruits in rows
+    for (let i = 0; i < categoryObjects.length; i++) {        
+        const element = categoryObjects[i];
+        for (let j = 0; j < element.length; j++) {
+
+            //check if the 3 companys have the same item or just 2 of them
+            if(element.length === 2){
+                // let num = parseInt
+                if(j === 0){
+                    worksheet.cell(startIndex + i + 2, 1).string(element[j].name).style(style)
+                    worksheet.cell(startIndex + i + 2, 2).string(element[j].type).style(style)
+                    worksheet.cell(startIndex + i + 2, 3).string(element[j].price).style(style)
+                } else if(j === 1 && element[j].company === 'shookit'){
+                    worksheet.cell(startIndex + i + 2, 4).string(element[j].name).style(style)
+                    worksheet.cell(startIndex + i + 2, 5).string(element[j].type).style(style)
+                    worksheet.cell(startIndex + i + 2, 6).string(element[j].price).style(style)
+
+                    worksheet.cell(startIndex + i + 2, 7).string('-').style(style)
+                    worksheet.cell(startIndex + i + 2, 8).string('-').style(style)
+                    worksheet.cell(startIndex + i + 2, 9).string('-').style(style)
+
+                } else if(j === 1 && element[j].company === 'carmella') {
+
+                    worksheet.cell(startIndex + i + 2, 4).string('-').style(style)
+                    worksheet.cell(startIndex + i + 2, 5).string('-').style(style)
+                    worksheet.cell(startIndex + i + 2, 6).string('-').style(style)
+
+                    worksheet.cell(startIndex + i + 2, 7).string(element[j].name).style(style)
+                    worksheet.cell(startIndex + i + 2, 8).string(element[j].type).style(style)
+                    worksheet.cell(startIndex + i + 2, 9).string(element[j].price).style(style)
+                }
+            } else if (element.length === 3) {
+                if (j === 0) {
+                    worksheet.cell(startIndex + i + 2, 1).string(element[j].name).style(style)
+                    worksheet.cell(startIndex + i + 2, 2).string(element[j].type).style(style)
+                    worksheet.cell(startIndex + i + 2, 3).string(element[j].price).style(style)
+                } 
+                else if (j === 1 && element[j].company === 'shookit') {
+                    worksheet.cell(startIndex + i + 2, 4).string(element[j].name).style(style)
+                    worksheet.cell(startIndex + i + 2, 5).string(element[j].type).style(style)
+                    worksheet.cell(startIndex + i + 2, 6).string(element[j].price).style(style)
+                } else if (j === 2 && element[j].company === 'carmella'){
+                    worksheet.cell(startIndex + i + 2, 7).string(element[j].name).style(style)
+                    worksheet.cell(startIndex + i + 2, 8).string(element[j].type).style(style)
+                    worksheet.cell(startIndex + i + 2, 9).string(element[j].price).style(style)
+                }
+        }
+    }
+
+    totalLength++
+ }
+
+    workbook.write('Excel.xlsx');
+    return totalLength
+}
 
 
 
@@ -1536,8 +1247,6 @@ async function selectAll(){
  
 }
 // selectAll()
-
-
 
 
 
