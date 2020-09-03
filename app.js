@@ -24,14 +24,6 @@ app.get('/socket', (req,res) => {
 })
 
 
-app.get('/client', (req,res) => {
-
-    console.log('/client')
-
-    res.download('Excel.xlsx')
-})
-
-
 app.get('/check', async (req,res) => {
 
     let obj = await greensShookit()
@@ -59,7 +51,7 @@ app.get('/promise', async (req,res) => {
                 combineFruitsOrVegetables(shookitGreen, await refreshGreen, carmellaVege)]);
    
    
-     let file = await createExcelFileWithCombine(allFruits, allVeges, allGreens)
+    let file = await createExcelFileWithCombine(allFruits, allVeges, allGreens)
    
     res.json("/promise")
 
@@ -101,15 +93,13 @@ async function callProgram(){
          await printPromise(combineGreenObject,'comgreen')
 
          let file = await createExcelFileWithCombine(combineFruitObject, combineVegeObject, combineGreenObject)
-
-        // let file = await createExcelFileWithCombine(allFruits, allVeges, allGreens)
 }
+
 
 
 app.get('/download', (req,res) => {
 
     console.log('/client')
-
     res.download('Excel.xlsx')
 })
 
@@ -307,8 +297,6 @@ async function fruitsRefresh(){
             let num = price * 10
             price = `${num}`
         }
-
-
         if(price === undefined){
             price = '0'
         }
@@ -393,7 +381,6 @@ async function fruitsCarmella(){
         inr.innerText
     ))
 
-
     const noMobile = await page.$$eval('.no_mobile' , innerText => innerText.map((inr,i) => 
         inr.innerText
     ))
@@ -435,7 +422,6 @@ async function fruitsCarmella(){
             }
         }
         
-
 
         let temp = {}
 
@@ -497,14 +483,6 @@ async function vegtablesShookit(){
         let unitOrWeight = productPrice[index].match(regex3)
 
 
-        // if(price === null){
-        //     price = 'empty'
-        // } else if(price.length === 2){
-        //     price = price[1]
-        // } else {
-        //     price = price
-        // }
-
         let name = productTitle[index]
         let arrName = productTitle[index].split(' ')
 
@@ -555,11 +533,13 @@ async function vegtablesRefresh(){
 
     let refresh = `https://www.refresh-market.co.il/category/%D7%99%D7%A8%D7%A7%D7%95%D7%AA`
 
+    try {
+
     const browser = await puppeteer.launch({headless:'true'}); //{args: ['--no-sandbox', '--disable-setuid-sandbox']}
     const page = await browser.newPage();
     await page.goto(refresh, {waitUntil: 'load', timeout: 0})
 
-
+        
     async function autoScroll(page){
         await page.evaluate(async () => {
             await new Promise((resolve, reject) => {
@@ -610,10 +590,16 @@ async function vegtablesRefresh(){
         obj.vegetables.push(temp)
     }
 
+    
+
     let sortObj = obj.vegetables.sort((a,b) => a.name.localeCompare(b.name))
     // sortObj.forEach(el => console.log(`'${el.name}',`))
 
     browser.close()
+
+    } catch (error) {
+        console.log(error)    
+    }
 
     console.log(sortObj.length,'vegtablesRefresh done')
     return sortObj 
@@ -683,7 +669,6 @@ async function vegetablesCarmella(){
         inr.innerText
     ))
     
-
 
 let obj = { company: "Carmella", vegetables: [] }
 let prices = []
@@ -782,7 +767,6 @@ productPrice.forEach((price,i) => {
         console.log("Error Occurred", error)
     } // end of try catch
 
-
 }
 // vegetablesCarmella()
 
@@ -850,7 +834,6 @@ async function greensRefresh(){
 
 
 
-
 async function greensShookit(){
 
     let refresh = `https://www.shookit.com/product-category/%d7%99%d7%a8%d7%95%d7%a7%d7%99%d7%9d/`
@@ -901,7 +884,6 @@ async function greensShookit(){
         }
 
         
-
         let temp = {}
         temp.name = name
         temp.price = newPrice
@@ -934,7 +916,6 @@ function compareTwoLists(productRefresh, shookitList) {
         let nameShookit = shookitObj.name.split(' ')
         // console.log(nameRefresh)
 
-
         if (nameShookit[0] === nameRefresh[0] && nameRefresh.length > 1 && nameShookit.length > 1) {
             if (nameShookit[1] === nameRefresh[1] && nameRefresh.length > 2 && nameShookit.length > 2) {
                 if(nameShookit[2] === nameRefresh[2]){
@@ -949,7 +930,6 @@ function compareTwoLists(productRefresh, shookitList) {
                 combineArr = [productRefresh, shookitObj]
                 break;
             }
-
 
     }
 
@@ -1000,7 +980,6 @@ function compareThirdLists(productRefresh, carmellaList) {
 
 function createExcelFileWithCombine(fruitsObjects, vegeObjects, greensObjects){
 
-        
     let style = workbook.createStyle({
         font: {
           color: 'black',
@@ -1098,9 +1077,7 @@ function createExcelFileWithCombine(fruitsObjects, vegeObjects, greensObjects){
         worksheet.cell(i,13).formula(calcPercCarmella).style(style);
     }
 
-
     console.log('done')
-    // workbook.write('Excel.xlsx');
 }
 
 
@@ -1173,7 +1150,7 @@ function setExcelRowColByCategory(worksheet, categoryObjects, startIndex){
     }
 
     totalLength++
- }
+  }
 
     workbook.write('Excel.xlsx');
     return totalLength
@@ -1200,7 +1177,6 @@ async function cancelOneModal(){
         console.log(modal)
     })
     
-    // cancelOneModal()
 }
 
 
@@ -1226,7 +1202,6 @@ async function selectAll(){
 
     await page.waitFor(6000)
 
-
     await page.evaluate(async () => {
 
         function delay(time) {
@@ -1246,12 +1221,9 @@ async function selectAll(){
     });
  
 }
-// selectAll()
-
 
 
 server.listen(process.env.PORT || 5000, () => console.log("Connected"))
-
 
 
 //tests
@@ -1271,8 +1243,6 @@ let str5 = "תפוח עץ - מוזהב"
 let reg6 = /[^- עץ]+/g
 let result6 = str5.match(reg6)
 console.log(result6)
-
-
 
 let result = str.match(reg3)
 let result2 = str2.match(reg3)
