@@ -75,8 +75,7 @@ app.get('/promiseAll', async (req,res) => {
 
 
 async function callProgram(){
-    let carmellaVege = await vegetablesCarmella()
-
+    // let carmellaVege = await vegetablesCarmella()
     // let [shookitFruits, refreshFruits, carmellaFruits,
     //      shookitVege, refreshVege,
     //      shookitGreen, refreshGreen]
