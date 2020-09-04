@@ -26,13 +26,13 @@ app.get('/socket', (req,res) => {
 
 app.get('/check', async (req,res) => {
 
-    let obj = await fruitsShookit()
-
+    // let obj = await fruitsShookit()
     // let obj = await greensShookit()
+    let obj = await greensRefresh()
+
     // let obj = await vegetablesCarmella()
     // let obj = await vegtablesShookit()
     // let obj = await vegtablesRefresh()
-
     res.json(obj)    
 })
 
@@ -65,10 +65,9 @@ app.get('/promise', async (req,res) => {
 
 
 
-
+//WORK !!
 app.get('/promiseAll', async (req,res) => {
 
-    // let fruits = await callProgram()
     let fruits = callProgram()
   
     res.json('Good')
@@ -183,9 +182,12 @@ async function combineFruitsOrVegetables(shookitFruits, refreshFruits, carmellaF
 }
 
 
+
 async function fruitsShookit(){
 
     let shookit = `https://www.shookit.com/product-category/%d7%a4%d7%99%d7%a8%d7%95%d7%aa/`
+
+    try {
 
     const browser = await puppeteer.launch({args: ['--no-sandbox', '--disable-setuid-sandbox']});
     const page = await browser.newPage();
@@ -193,14 +195,16 @@ async function fruitsShookit(){
 
 
     // get name of product
-    const productTitle = await page.$$eval('.product-title' , innerText => innerText.splice(0,27).map((inr,i) => 
+    const productTitle = await page.$$eval('.product-title' , innerText => innerText.map((inr,i) => 
         inr.innerText
     ))
 
     //get product price
-    const productPrice = await page.$$eval('.product-pricing-container' , innerText => innerText.splice(0,27).map((inr,i) => 
+    const productPrice = await page.$$eval('.product-pricing-container' , innerText => innerText.map((inr,i) => 
         inr.innerText
     ))
+
+    // console.log(productTitle, productTitle.length)
 
     let obj = { company: "shookit", fruits: [] }
 
@@ -231,7 +235,6 @@ async function fruitsShookit(){
         }
 
 
-        let element = `${weight} - ${price}`;
 
         let name = productTitle[index]
         let parseName = name.split(' ')
@@ -242,12 +245,22 @@ async function fruitsShookit(){
             if(name === 'תפוח סמית׳')
                 name = `תפוח סמית`
         }
-
-        if(unitOrWeight === undefined || unitOrWeight === null){
-            console.log('Null')
-            unitOrWeight = '0'
+        if(`${parseName[0]} ${parseName[1]}` === "תמר מג'הול"){
+            name = `מארז תמר מג'הול 500 גרם`
         }
-        
+        if(`${parseName[0]}` === "קיווי"){
+            if(parseName.length === 1){
+                name = `קיווי ירוק`
+            } else {
+                name = `קיווי צהוב`
+            }
+            
+        }
+        if(`${parseName[0]} ${parseName[1]} ${parseName[2]}` === "ענב שחור טלי"){
+            name = `ענבים שחורים`
+        }
+        // נב שחור טלי
+        // תמר מג'הול
 
         let temp = {}
         temp.name = name
@@ -269,8 +282,13 @@ async function fruitsShookit(){
     
     console.log(sortObj.length,'fruitsShookit done')
 
-    browser.close()
-    return sortObj
+    //  browser.close()
+     return sortObj
+
+    } catch (error) {
+        console.log(error)
+    }
+    
 }
 // fruitsShookit()
 
@@ -412,17 +430,20 @@ async function fruitsCarmella(){
             unitOrWeight[i] = unitOrWeight[i].match(regex3)
         } 
 
+
         //manual fruit fixing
+        if(productTitle[i] === "אגס ספדונה"){
+            productTitle[i] = `אגס`
+        }
         if(productTitle[i] === 'אננס קריבי'){
             productTitle[i] = 'אננס'
         }
         if(productTitle[i] === `שזיף 'בלאק דיימונד'`){
             productTitle[i] = 'שזיף אדום'
         }
-        // if(productTitle[i]){
-        //     productTitle[i] = 'ענבים שחורים'
-        // }
+        
         let newName = productTitle[i].split(' ')
+
         if (newName[0] === 'תפוח') {
             if (`${newName[0]} ${newName[2]}` === 'תפוח פינק') {
                 productTitle[i] = `${newName[0]} ${newName[2]}`
@@ -431,6 +452,21 @@ async function fruitsCarmella(){
                 productTitle[i] = `תפוח סמית`
             }
         }
+        if (newName[0] === 'אבטיח') {
+            if (newName.length === 1) {
+                productTitle[i] = `אבטיח שלם`
+                let num = prices[i] * 10
+                prices[i] = `${num}`
+            } else if(`${newName[0]} ${newName[1]}` === `חצי אבטיח`) {
+                productTitle[i] = `חצי אבטיח`
+            }
+        }
+        if (newName[0] === 'קיווי') {
+            if (`${newName[0]} ${newName[1]}` === 'קיווי ניוזילנדי') {
+                productTitle[i] = `קיווי ירוק`
+            }
+        }
+        
         
 
         let temp = {}
@@ -495,6 +531,7 @@ async function vegtablesShookit(){
 
         let name = productTitle[index]
         let arrName = productTitle[index].split(' ')
+        // console.log(arrName)
 
         //change names of vegetables
         if(`${arrName[0]}` === 'מלפפון'){
@@ -505,6 +542,13 @@ async function vegtablesShookit(){
             }
         }
 
+        if(name === 'תפוח אדמה בתפזורת'){
+            name = `תפוח אדמה לבן`
+        }
+
+        if(name === 'תירס'){
+            name = `תירס (מארז)`
+        }
         if(name === 'פטריות שמפיניון'){
             name = `שמפניון (מארז)`
         }
@@ -514,10 +558,9 @@ async function vegtablesShookit(){
         if(name === 'עגבנייה - אשכולות'){
             name = `עגבניה מובחרת`
         }
-        if(name === 'תפוח אדמה בתפזורת'){
-            name = `תפוח אדמה לבן`
+        if(name === `פלפל צ'ילי חריף`){
+            name = `פלפל צ'ילי`
         }
-        
 
         let temp = {}
         temp.name = name
@@ -589,11 +632,18 @@ async function vegtablesRefresh(){
 
         let name = productTitle[index]
         let price = productPrice[index]
+        
+        let unitOrWeight = name.split(' ')
+        if(unitOrWeight[unitOrWeight.length-1] === `(מארז)`){
+            unitOrWeight = `מארז`
+        } else {
+            unitOrWeight = `ק\"ג`
+        }
 
         let temp = {}
         temp.name = name
         temp.price = price
-        temp.type = "ק\"ג"
+        temp.type = unitOrWeight
         temp.category = 'Vegetables'
         temp.company = 'refresh'
 
@@ -601,7 +651,6 @@ async function vegtablesRefresh(){
     }
 
     
-
     let sortObj = obj.vegetables.sort((a,b) => a.name.localeCompare(b.name))
     // sortObj.forEach(el => console.log(`'${el.name}',`))
 
@@ -678,13 +727,18 @@ async function vegetablesCarmella(){
     const unitOrWeight = await page.$$eval('.pr_price_kilo' , innerText => innerText.map((inr,i) => 
         inr.innerText
     ))
+
+    // console.log(productTitle)
+    // console.dir(productTitle, {'maxArrayLength': null})
+
     
 
-let obj = { company: "Carmella", vegetables: [] }
-let prices = []
+    let obj = { company: "Carmella", vegetables: [] }
+    let prices = []
 
-//begin creating new object of carmella fruit
-productPrice.forEach((price,i) => {
+
+    //begin creating new object of carmella fruit
+    productPrice.forEach((price,i) => {
 
     //set price without ₪
     let newPrice = price.replace(" ₪", "")
@@ -699,9 +753,25 @@ productPrice.forEach((price,i) => {
     let name = productTitle[i].split(' ')
     // console.log(name)
 
-    //fix name of vegetable
+    //fix name of vegetable/greens
+    if(`${name[0]} ${name[1]} ${name[2]}` === `מנגולד / עלי`){
+        console.log("mang")
+        productTitle[i] = `סלק עלים / מנגולד (מארז`
+    }
+    if(`${name[0]}` === `טימין/`){
+        productTitle[i] = `קורנית/טימין (מארז)`
+    }
+    if(`${name[0]}` === `רוקולה/ארוגולה`){
+        productTitle[i] = `רוקולה`
+    }
+    if(`${name[0]}` === `ג'ינג'ר/`){
+        productTitle[i] = `ג'ינג'ר`
+    }
     if(`${name[0]} ${name[1]}` === `אבוקדו 'גליל'`){
         productTitle[i] = `אבוקדו בשל`
+    }
+    if(`${name[0]} ${name[1]}` === `אנדיב/ עולש` && name.length === 2){
+            productTitle[i] = `אנדיב (מארז)`
     }
     if(productTitle[i] === 'כרוב אדום'){
         productTitle[i] = `כרוב סגול`
@@ -729,7 +799,7 @@ productPrice.forEach((price,i) => {
         prices[i] = `${num}`
     }
     if(`${name[0]} ${name[1]}` === 'תירס "סוויטי"'){
-        productTitle[i] = `תירס (מארז)`
+        productTitle[i] = `תירס (מארז) "סיוון"`
     }
     if(`${name[0]} ${name[1]}` === `שום ארוז\n(מארז`){
         productTitle[i] = `ראש שום`
@@ -743,14 +813,41 @@ productPrice.forEach((price,i) => {
     if(`${name[0]} ${name[1]}` === 'גזר תפזורת'){
         productTitle[i] = `גזר`
     }
+    if(`${name[0]} ${name[1]}` === 'מלפפון בייבי'){
+        productTitle[i] = `מלפפון מיני`
+    }
+    if(`${name[0]} ${name[1]}` === 'חציל חממה'){
+        productTitle[i] = `חציל`
+    }
+    if(`${name[0]} ${name[1]}` === 'חסה עגולה/'){
+        productTitle[i] = `חסה עגולה`
+    }
+    if(`${name[0]} ${name[1]}` === 'שורש סלרי'){
+        productTitle[i] = `סלרי ראש`
+    }
+    if(`${name[0]} ${name[1]}` === 'שום קלוף'){
+        productTitle[i] = `שום קלוף (מארז) 1 ק"ג`
+    }
     if(`${name[0]} ${name[1]} ${name[2]}` === 'עגבניות שרי תמר'){
         productTitle[i] = `סלק בוואקום (מארז)`
     }
     if(`${name[0]} ${name[1]} ${name[2]}` === 'פלפל חריף ירוק'){
         productTitle[i] = `פלפל ירוק חריף`
     }
-
-
+    if(`${name[0]} ${name[1]} ${name[2]}` === `פלפל צ'ילי אדום`){
+        productTitle[i] = `פלפל צ'ילי (מארז)`
+    }
+    if(`${name[0]} ${name[1]} ${name[2]}` === `פלפל טינקרבל מתוק`){
+        productTitle[i] = `פלפלונים מתוקים - טינקרבל `
+    }
+    if(`${name[0]} ${name[1]}` === `שורש כורכום`){
+            productTitle[i] = `כורכום טרי`
+    }
+    if(`${name[0]} ${name[1]}` === `חסה לבבות`){
+        productTitle[i] = `לבבות חסה`
+    }
+   
+    
     let temp = {}
 
     if (price !== undefined) {
@@ -808,6 +905,14 @@ async function greensRefresh(){
 
         let name = productTitle[index].split(' ')
         let price = productPrice[index]
+        // console.log(name, index)
+
+        let unitOrWeight = name
+        if(unitOrWeight[unitOrWeight.length-1] === `(מארז)`){
+            unitOrWeight = `מארז`
+        } else {
+            unitOrWeight = `יחידה`
+        }
 
 
         //cut the last word in a name
@@ -818,6 +923,8 @@ async function greensRefresh(){
              newName = `${name[0]} ${name[1]}`
         } else if(name.length === 4){
             newName = `${name[0]} ${name[1]} ${name[2]}`
+        } else if(name.length === 5){
+            newName = `${name[0]} ${name[1]} ${name[2]} ${name[3]}`
         } else {
             newName = ''
         }
@@ -826,7 +933,7 @@ async function greensRefresh(){
         let temp = {}
         temp.name = newName
         temp.price = price
-        temp.type = "מארז"
+        temp.type = unitOrWeight
         temp.category = 'Greens'
         temp.company = 'refresh'
 
@@ -892,7 +999,13 @@ async function greensShookit(){
         if(name === 'ג׳ינג׳ר'){
             name = `ג'ינג'ר`
         }
-
+        if(name === 'חסה אייסברג'){
+            name = `חסה עגולה אייסברג`
+        }
+        if(name === 'מנגולד'){
+            name = `סלק עלים /`
+        }
+        
         
         let temp = {}
         temp.name = name
@@ -931,15 +1044,15 @@ function compareTwoLists(productRefresh, shookitList) {
                 if(nameShookit[2] === nameRefresh[2]){
                     combineArr = [productRefresh, shookitObj]
                     break
-                }
-            } else if (nameShookit[1] === nameRefresh[1]) {
+                } 
+            } else if (nameShookit[1] === nameRefresh[1] && nameRefresh.length >= 2 && nameShookit.length >= 2) {
                     combineArr = [productRefresh, shookitObj]
                     break
                 } 
         } else if(nameShookit[0] === nameRefresh[0] && nameRefresh.length === 1) {
                 combineArr = [productRefresh, shookitObj]
                 break;
-            }
+        }  
 
     }
 
@@ -952,7 +1065,7 @@ function compareTwoLists(productRefresh, shookitList) {
 }
 
 
-
+//compare between refresh and carmella objects
 function compareThirdLists(productRefresh, carmellaList) {
     let carmellaObj = {}
 
@@ -977,7 +1090,7 @@ function compareThirdLists(productRefresh, carmellaList) {
         } else if(nameCarmella[0] === nameRefresh[0] && nameRefresh.length === 1){
                 carmellaObj = carmellaItem
                 break
-        }
+        } 
 
 
     }
@@ -1249,7 +1362,5 @@ let str3 = 'מארז - 29.9'
 let str4 = "39.9 , 34.9"
 let str5 = "תפוח עץ - מוזהב"
 let reg6 = /[^- עץ]+/g
-
-
 
 
