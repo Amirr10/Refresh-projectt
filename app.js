@@ -96,6 +96,8 @@ async function callProgram(){
          await printPromise(combineGreenObject,'comgreen')
 
          let file = await createExcelFileWithCombine(combineFruitObject, combineVegeObject, combineGreenObject)
+        //  web: node --optimize_for_size --max_old_space_size=500 server.js
+        console.log(process.memoryUsage())
 }
 
 
