@@ -77,12 +77,15 @@ app.get('/promiseAll', async (req,res) => {
 async function callProgram(){
     let carmellaVege = await vegetablesCarmella()
 
-    let [shookitFruits, refreshFruits, carmellaFruits,
-         shookitVege, refreshVege,
-         shookitGreen, refreshGreen]
-        = await Promise.all([fruitsShookit(), await fruitsRefresh(), fruitsCarmella(),
-                            vegtablesShookit(), await vegtablesRefresh(),
-                            greensShookit(), await greensRefresh()]);  
+    // let [shookitFruits, refreshFruits, carmellaFruits,
+    //      shookitVege, refreshVege,
+    //      shookitGreen, refreshGreen]
+    //     = await Promise.all([fruitsShookit(), await fruitsRefresh(), fruitsCarmella(),
+    //                         vegtablesShookit(), await vegtablesRefresh(),
+    //                         greensShookit(), await greensRefresh()]);  
+        let [shookitFruits, refreshFruits, carmellaFruits] = await Promise.all([fruitsShookit(), fruitsRefresh(), fruitsCarmella()])
+        let [shookitVege, refreshVege, carmellaVege] = await Promise.all([vegtablesShookit(), vegtablesRefresh(), vegetablesCarmella()])
+        let [shookitGreen, refreshGreen] = await Promise.all([greensShookit(), greensRefresh()])
     
 
          let combineVegeObject = await combineFruitsOrVegetables(shookitVege, refreshVege, carmellaVege)
@@ -755,7 +758,6 @@ async function vegetablesCarmella(){
 
     //fix name of vegetable/greens
     if(`${name[0]} ${name[1]} ${name[2]}` === `מנגולד / עלי`){
-        console.log("mang")
         productTitle[i] = `סלק עלים / מנגולד (מארז`
     }
     if(`${name[0]}` === `טימין/`){
