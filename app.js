@@ -82,8 +82,8 @@ async function callProgram(){
     //     = await Promise.all([fruitsShookit(), await fruitsRefresh(), fruitsCarmella(),
     //                         vegtablesShookit(), await vegtablesRefresh(),
     //                         greensShookit(), await greensRefresh()]);  
+        let [shookitVege, refreshVege, carmellaVege] = await Promise.all([vegtablesShookit(), vegtablesRefresh(), await vegetablesCarmella()])
         let [shookitFruits, refreshFruits, carmellaFruits] = await Promise.all([fruitsShookit(), fruitsRefresh(), fruitsCarmella()])
-        let [shookitVege, refreshVege, carmellaVege] = await Promise.all([vegtablesShookit(), vegtablesRefresh(), vegetablesCarmella()])
         let [shookitGreen, refreshGreen] = await Promise.all([greensShookit(), greensRefresh()])
     
 
