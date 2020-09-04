@@ -97,8 +97,20 @@ async function callProgram(){
 
          let file = await createExcelFileWithCombine(combineFruitObject, combineVegeObject, combineGreenObject)
         //  web: node --optimize_for_size --max_old_space_size=500 server.js
-        console.log(process.memoryUsage())
+
+        for (let index = 0; index < 1; index++) {
+            // global.gc(); 
+            shookitVege = []
+            refreshVege = []
+            carmellaVege = []
+            shookitFruits = []
+            refreshFruits = []
+            carmellaFruits = [] 
+            console.log(index, 'GC')          
+        }
+        // console.log(process.memoryUsage())
 }
+
 
 
 
