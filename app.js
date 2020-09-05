@@ -28,9 +28,10 @@ app.get('/check', async (req,res) => {
 
     // let obj = await fruitsShookit()
     // let obj = await greensShookit()
-    let obj = await greensRefresh()
+    // let obj = await greensRefresh()
 
-    // let obj = await vegetablesCarmella()
+
+    let obj = await vegetablesCarmella()
     // let obj = await vegtablesShookit()
     // let obj = await vegtablesRefresh()
     res.json(obj)    
@@ -74,19 +75,16 @@ app.get('/promiseAll', async (req,res) => {
 })
 
 
+//async function to fetch all data and create an excel file from it
 async function callProgram(){
-    // let carmellaVege = await vegetablesCarmella()
-    // let [shookitFruits, refreshFruits, carmellaFruits,
-    //      shookitVege, refreshVege,
-    //      shookitGreen, refreshGreen]
-    //     = await Promise.all([fruitsShookit(), await fruitsRefresh(), fruitsCarmella(),
-    //                         vegtablesShookit(), await vegtablesRefresh(),
-    //                         greensShookit(), await greensRefresh()]);  
+    
+        //get all data of fruits, vegetables and greens
         let [shookitVege, refreshVege, carmellaVege] = await Promise.all([vegtablesShookit(), vegtablesRefresh(), await vegetablesCarmella()])
         let [shookitFruits, refreshFruits, carmellaFruits] = await Promise.all([fruitsShookit(), fruitsRefresh(), fruitsCarmella()])
         let [shookitGreen, refreshGreen] = await Promise.all([greensShookit(), greensRefresh()])
     
 
+        //match all the fruits/vegetables/greens that equal and put them into the same object
          let combineVegeObject = await combineFruitsOrVegetables(shookitVege, refreshVege, carmellaVege)
          let combineFruitObject = await combineFruitsOrVegetables(shookitFruits, refreshFruits, carmellaFruits)
          let combineGreenObject = await combineFruitsOrVegetables(shookitGreen, refreshGreen, carmellaVege)
@@ -95,13 +93,9 @@ async function callProgram(){
          await printPromise(combineFruitObject,'comvfruit')
          await printPromise(combineGreenObject,'comgreen')
 
+         //create an excel file from all the combined objects
          let file = await createExcelFileWithCombine(combineFruitObject, combineVegeObject, combineGreenObject)
-        //  web: node --optimize_for_size --max_old_space_size=500 server.js
-
-        for (let index = 0; index < 10; index++) {
-            global.gc(); 
-            console.log(index, 'GC')
-        }
+        //web: node --optimize_for_size --max_old_space_size=500 server.js
         // console.log(process.memoryUsage())
 }
 
@@ -541,7 +535,7 @@ async function vegtablesShookit(){
 
         let name = productTitle[index]
         let arrName = productTitle[index].split(' ')
-        // console.log(arrName)
+        // console.log(name)
 
         //change names of vegetables
         if(`${arrName[0]}` === 'מלפפון'){
@@ -555,7 +549,6 @@ async function vegtablesShookit(){
         if(name === 'תפוח אדמה בתפזורת'){
             name = `תפוח אדמה לבן`
         }
-
         if(name === 'תירס'){
             name = `תירס (מארז)`
         }
@@ -769,6 +762,14 @@ async function vegetablesCarmella(){
     }
     if(`${name[0]}` === `טימין/`){
         productTitle[i] = `קורנית/טימין (מארז)`
+    }    
+    if(`${name[0]}` === `כרישה/`){
+        productTitle[i] = `לוף/כרישה`
+    }
+    if(`${name[0]}` === `תרד\n(מארז)\n400`){
+        if(name.length === 1){
+            productTitle[i] = `עלי תרד`
+        }
     }
     if(`${name[0]}` === `רוקולה/ארוגולה`){
         productTitle[i] = `רוקולה`
@@ -778,6 +779,10 @@ async function vegetablesCarmella(){
     }
     if(`${name[0]} ${name[1]}` === `אבוקדו 'גליל'`){
         productTitle[i] = `אבוקדו בשל`
+    }
+        // סלרי/כרפס
+    if(`${name[0]} ${name[1]}` === `עלי סלרי/כרפס`){
+        productTitle[i] = `סלרי עלים`
     }
     if(`${name[0]} ${name[1]}` === `אנדיב/ עולש` && name.length === 2){
             productTitle[i] = `אנדיב (מארז)`
@@ -801,6 +806,9 @@ async function vegetablesCarmella(){
     }
     if(`${name[0]} ${name[1]}` === 'צמד שמפניון'){
         productTitle[i] = `דואט פטריות (מארז)`
+    }
+    if(`${name[0]} ${name[1]}` === 'נבטים סינים'){
+        productTitle[i] = `נבטים סיניים`
     }
     if(`${name[0]} ${name[1]}` === 'פטריות מיקס\n(מארז)\n400'){
         productTitle[i] = `מיקס פטריות (מארז)`
@@ -1000,10 +1008,18 @@ async function greensShookit(){
         let newPrice = splitPrice[0].replace("(₪","")
 
         let name = productTitle[index]
+        // console.log(name)
 
         //change names of greens
         if(name === 'שורש כורכום מארז 120 גרם'){
             name = `כורכום טרי`
+        }
+        // עלי סלרי
+        if(name === 'עלי סלרי'){
+            name = `סלרי עלים`
+        }
+        if(name === 'כרישה'){
+            name = `לוף/כרישה (מארז)`
         }
         if(name === 'ג׳ינג׳ר'){
             name = `ג'ינג'ר`
@@ -1373,3 +1389,7 @@ let str5 = "תפוח עץ - מוזהב"
 let reg6 = /[^- עץ]+/g
 
 
+// let ter = `תרד\n(מארז)\n400`
+// let cut = ter.trim()
+
+// console.log(cut.split(' '))
