@@ -26,12 +26,12 @@ app.get('/socket', (req,res) => {
 
 app.get('/check', async (req,res) => {
 
-    // let obj = await fruitsShookit()
+    let obj = await fruitsShookit()
     // let obj = await greensShookit()
     // let obj = await greensRefresh()
 
 
-    let obj = await vegetablesCarmella()
+    // let obj = await vegetablesCarmella()
     // let obj = await vegtablesShookit()
     // let obj = await vegtablesRefresh()
     res.json(obj)    
@@ -95,6 +95,16 @@ async function callProgram(){
 
          //create an excel file from all the combined objects
          let file = await createExcelFileWithCombine(combineFruitObject, combineVegeObject, combineGreenObject)
+
+         file = null
+         shookitVege = null
+         refreshVege = null
+         carmellaVege = null
+         shookitFruits = null
+         refreshFruits = null 
+         carmellaFruits = null
+         shookitGreen = null
+         refreshGreen = null
         //web: node --optimize_for_size --max_old_space_size=500 server.js
         // console.log(process.memoryUsage())
 }
@@ -199,12 +209,12 @@ async function fruitsShookit(){
 
 
     // get name of product
-    const productTitle = await page.$$eval('.product-title' , innerText => innerText.map((inr,i) => 
+    let productTitle = await page.$$eval('.product-title' , innerText => innerText.map((inr,i) => 
         inr.innerText
     ))
 
     //get product price
-    const productPrice = await page.$$eval('.product-pricing-container' , innerText => innerText.map((inr,i) => 
+    let productPrice = await page.$$eval('.product-pricing-container' , innerText => innerText.map((inr,i) => 
         inr.innerText
     ))
 
@@ -280,6 +290,7 @@ async function fruitsShookit(){
     let objects = {
         name: 'Shookit'
     }
+
 
     let sortObj = obj.fruits.sort((a,b) => a.name.localeCompare(b.name))
     // sortObj.forEach(el => console.log(el))
