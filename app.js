@@ -28,11 +28,12 @@ app.get('/socket', (req,res) => {
 app.get('/check', async (req,res) => {
 
     // let obj = await fruitsShookit()
-    let obj = await greensShookit()
+    // let obj = await greensShookit()
     // let obj = await greensRefresh()
     //   let obj =  await shookitInstance.getFruits()
     //   let obj2 =  await shookitInstance.getVegetables()
 
+    let obj = await fruitsCarmella()
     // let obj = await vegetablesCarmella()
     // let obj = await vegtablesShookit()
     // let obj = await vegtablesRefresh()
@@ -463,12 +464,13 @@ async function fruitsCarmella(){
         }
         
         let newName = productTitle[i].split(' ')
+        // console.log(newName)
 
         if (newName[0] === 'תפוח') {
-            if (`${newName[0]} ${newName[2]}` === 'תפוח פינק') {
-                productTitle[i] = `${newName[0]} ${newName[2]}`
-            }
-            if (`${newName[0]} ${newName[3]}` === `תפוח סמית'`) {
+            if(`${newName[2]}` !== `גראנד`){
+                // console.log(newName[2])
+                productTitle[i] = `${newName[0]} ${newName[2].replace("/", "")}`
+            } else {
                 productTitle[i] = `תפוח סמית`
             }
         }
