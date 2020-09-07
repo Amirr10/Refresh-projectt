@@ -14,7 +14,8 @@ const fs = require('fs');
 app.use(express.static('public'))
 app.use(cors())
 
-
+// let ShookitService = require('./services/ShookitService')
+// let shookitInstance = new ShookitService()
 
 app.get('/socket', (req,res) => {
 
@@ -26,10 +27,11 @@ app.get('/socket', (req,res) => {
 
 app.get('/check', async (req,res) => {
 
-    let obj = await fruitsShookit()
-    // let obj = await greensShookit()
+    // let obj = await fruitsShookit()
+    let obj = await greensShookit()
     // let obj = await greensRefresh()
-
+    //   let obj =  await shookitInstance.getFruits()
+    //   let obj2 =  await shookitInstance.getVegetables()
 
     // let obj = await vegetablesCarmella()
     // let obj = await vegtablesShookit()
@@ -69,7 +71,7 @@ app.get('/promise', async (req,res) => {
 //WORK !!
 app.get('/promiseAll', async (req,res) => {
 
-    let fruits = callProgram()
+    callProgram()
   
     res.json('Good')
 })
@@ -186,6 +188,9 @@ async function combineFruitsOrVegetables(shookitFruits, refreshFruits, carmellaF
             combineObj.push(newArray)
         } else if(arr === null && Object.keys(thirdObj).length > 0){
             newArray = [refreshObj, thirdObj]
+            combineObj.push(newArray)
+        } else {
+            newArray = [refreshObj]
             combineObj.push(newArray)
         }
         
@@ -1265,7 +1270,19 @@ function setExcelRowColByCategory(worksheet, categoryObjects, startIndex) {
         for (let j = 0; j < element.length; j++) {
 
             //check if the 3 companys have the same item or just 2 of them
-            if (element.length === 2) {
+            if(element.length === 1){
+                worksheet.cell(startIndex + i + 2, 1).string(element[j].name).style(style)
+                worksheet.cell(startIndex + i + 2, 2).string(element[j].type).style(style)
+                worksheet.cell(startIndex + i + 2, 3).string(element[j].price).style(style)
+
+                worksheet.cell(startIndex + i + 2, 4).string('-').style(style)
+                worksheet.cell(startIndex + i + 2, 5).string('-').style(style)
+                worksheet.cell(startIndex + i + 2, 6).string('-').style(style)
+
+                worksheet.cell(startIndex + i + 2, 7).string('-').style(style)
+                worksheet.cell(startIndex + i + 2, 8).string('-').style(style)
+                worksheet.cell(startIndex + i + 2, 9).string('-').style(style)
+            } else if (element.length === 2) {
                 // let num = parseInt
                 if (j === 0) {
                     worksheet.cell(startIndex + i + 2, 1).string(element[j].name).style(style)
