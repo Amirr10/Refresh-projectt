@@ -32,6 +32,7 @@ app.get('/check', async (req,res) => {
     // let obj = await greensRefresh()
     //   let obj =  await shookitInstance.getFruits()
     //   let obj2 =  await shookitInstance.getVegetables()
+    // let obj = await fruitsRefresh()
 
     let obj = await fruitsCarmella()
     // let obj = await vegetablesCarmella()
@@ -268,16 +269,27 @@ async function fruitsShookit(){
         if(`${parseName[0]} ${parseName[1]}` === "תמר מג'הול"){
             name = `מארז תמר מג'הול 500 גרם`
         }
+
+        if(`${parseName[0]} ${parseName[1]}` === "אננס טבעי-"){
+            name = `אננס`
+            price = '0'
+        }
         if(`${parseName[0]}` === "קיווי"){
             if(parseName.length === 1){
                 name = `קיווי ירוק`
             } else {
                 name = `קיווי צהוב`
             }
-            
         }
-        if(`${parseName[0]} ${parseName[1]} ${parseName[2]}` === "ענב שחור טלי"){
-            name = `ענבים שחורים`
+        if(`${parseName[0]}` === "ענבי"){
+            if(`${parseName[2]}` === 'ירוקים'){
+                name = `ענבים ירוקים (1.3 ק"ג)`
+            } else if(`${parseName[2]}` === 'שחורים'){
+                name = `ענבים שחורים (1.2 ק"ג)`
+            }
+        }
+        if(`${parseName[0]}` === "אוכמניות"){
+            name = `אוכמניות (מארז)`
         }
         // נב שחור טלי
         // תמר מג'הול
@@ -341,6 +353,8 @@ async function fruitsRefresh(){
 
         let name = productTitle[index]
         let price = productPrice[index]
+        
+        // console.log(name)
 
         if(name === 'אבטיח שלם'){
             let num = price * 10
@@ -438,8 +452,14 @@ async function fruitsCarmella(){
     let obj = { company: "Carmella", fruits: [] }
     let prices = []
 
+    
+
+
     //begin creating new object of carmella fruit
     productPrice.forEach((price,i) => {
+        // let testName = productTitle[i].split(/\s+/)
+        let name = productTitle[i].split(' ')
+        // console.log(name)
 
         //set price without ₪
         let newPrice = price.replace(" ₪", "")
@@ -453,6 +473,7 @@ async function fruitsCarmella(){
 
 
         //manual fruit fixing
+        
         if(productTitle[i] === "אגס ספדונה"){
             productTitle[i] = `אגס`
         }
@@ -462,15 +483,22 @@ async function fruitsCarmella(){
         if(productTitle[i] === `שזיף 'בלאק דיימונד'`){
             productTitle[i] = 'שזיף אדום'
         }
+        if(productTitle[i] === `לימון בודהה ירוק`){
+            productTitle[i] = '-'
+        }
         
-        let newName = productTitle[i].split(' ')
+        // let newName = productTitle[i].split(' ')
+        let newName = productTitle[i].split(/\s+/)
         // console.log(newName)
 
         if (newName[0] === 'תפוח') {
-            if(`${newName[2]}` !== `גראנד`){
-                // console.log(newName[2])
+            let gala = newName[2].replace(/\'+/g,"").trim()
+
+            if(gala === 'גאלה') {
+                productTitle[i] = `תפוח גאלה`
+            } else if(`${newName[2]}` !== `גראנד`){
                 productTitle[i] = `${newName[0]} ${newName[2].replace("/", "")}`
-            } else {
+            }  else {
                 productTitle[i] = `תפוח סמית`
             }
         }
@@ -488,7 +516,9 @@ async function fruitsCarmella(){
                 productTitle[i] = `קיווי ירוק`
             }
         }
-        
+        if (newName[0] === 'אוכמניות') {
+            productTitle[i] = `אוכמניות (מארז)`
+        }
         
 
         let temp = {}
@@ -654,6 +684,8 @@ async function vegtablesRefresh(){
         let name = productTitle[index]
         let price = productPrice[index]
         
+        // console.log(name.split(' '))
+
         let unitOrWeight = name.split(' ')
         if(unitOrWeight[unitOrWeight.length-1] === `(מארז)`){
             unitOrWeight = `מארז`
@@ -805,6 +837,18 @@ async function vegetablesCarmella(){
     if(`${name[0]} ${name[1]}` === `אנדיב/ עולש` && name.length === 2){
             productTitle[i] = `אנדיב (מארז)`
     }
+    if (`${name[1]}` === 'שרי') {
+        if (`${name[2]}` === 'תמר') {
+            productTitle[i] = `שרי אדום (מארז)`
+            let num = prices[i] * 0.4
+            prices[i] = `${num}`
+        }
+         else if (`${name[2]}` === 'צהוב'){
+            productTitle[i] = `שרי צהוב`
+            let num = prices[i] * 0.4
+            prices[i] = `${num}`
+        }
+    }
     if(productTitle[i] === 'כרוב אדום'){
         productTitle[i] = `כרוב סגול`
     }
@@ -863,9 +907,9 @@ async function vegetablesCarmella(){
     if(`${name[0]} ${name[1]}` === 'שום קלוף'){
         productTitle[i] = `שום קלוף (מארז) 1 ק"ג`
     }
-    if(`${name[0]} ${name[1]} ${name[2]}` === 'עגבניות שרי תמר'){
-        productTitle[i] = `סלק בוואקום (מארז)`
-    }
+    // if(`${name[0]} ${name[1]} ${name[2]}` === 'עגבניות שרי תמר'){
+    //     productTitle[i] = `סלק בוואקום (מארז)`
+    // }
     if(`${name[0]} ${name[1]} ${name[2]}` === 'פלפל חריף ירוק'){
         productTitle[i] = `פלפל ירוק חריף`
     }
@@ -1125,11 +1169,13 @@ function compareThirdLists(productRefresh, carmellaList) {
                 if (nameCarmella[2] === nameRefresh[2]) {
                     carmellaObj = carmellaItem
                     break
-                }
+                } 
             } else if (nameCarmella[1] === nameRefresh[1]) {
                 carmellaObj = carmellaItem
                 break
-            } 
+            } else {
+                continue //TEST
+            }
         } else if(nameCarmella[0] === nameRefresh[0] && nameRefresh.length === 1){
                 carmellaObj = carmellaItem
                 break
@@ -1169,7 +1215,24 @@ function createExcelFileWithCombine(fruitsObjects, vegeObjects, greensObjects){
           alignment: {
             horizontal: 'center',
             vertical: 'center'
-        }
+          }, border: {
+            right: {
+                style: 'thin',
+                color: '#000000'
+            },
+            left: {
+                style: 'thin',
+                color: '#000000'
+            },
+            top: {
+                style: 'thin',
+                color: '#000000'
+            },
+            bottom: {
+                style: 'thin',
+                color: '#000000'
+            }
+          }
       });
 
       let styleDiff = workbook.createStyle({
@@ -1181,10 +1244,33 @@ function createExcelFileWithCombine(fruitsObjects, vegeObjects, greensObjects){
           alignment: {
             horizontal: 'center',
             vertical: 'center'
-        }
+        },  border: {
+            right: {
+                style: 'thin',
+                color: '#000000'
+            },
+            left: {
+                style: 'thin',
+                color: '#000000'
+            },
+            top: {
+                style: 'thin',
+                color: '#000000'
+            },
+            bottom: {
+                style: 'thin',
+                color: '#000000'
+            }
+          }
       });
+
     
-    let worksheet = workbook.addWorksheet('Sheet 1');
+      let options = {
+        'sheetView': {
+            'rightToLeft': true
+        }
+      };
+    let worksheet = workbook.addWorksheet('Sheet 1', options);
     
     worksheet.row(1).setHeight(30);
     worksheet.column(1).setWidth(22);
