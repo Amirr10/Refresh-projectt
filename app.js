@@ -11,7 +11,7 @@ const fs = require('fs');
 app.use(express.static('public'))
 app.use(cors())
 
-
+//get the controller functions from AllData.js
 const allData = require('./controller/AllData')
 app.get('/promiseAll', allData.getAllData);
 app.get('/check', allData.testFunction);

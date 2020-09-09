@@ -42,7 +42,7 @@ class CarmellaService {
                 });
             }
 
-            // get name of product
+            /// get name of product
             const productTitle = await page.$$eval('.no_mobile', innerText => innerText.map((inr, i) =>
                 inr.innerText
             ))
