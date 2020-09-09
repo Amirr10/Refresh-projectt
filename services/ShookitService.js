@@ -1,110 +1,121 @@
 const puppeteer = require('puppeteer');
 
-module.exports =  class ShookitService {
+ class ShookitService {
 
     async getFruits(){
 
         let shookit = `https://www.shookit.com/product-category/%d7%a4%d7%99%d7%a8%d7%95%d7%aa/`
 
         try {
-
-            const browser = await puppeteer.launch({ args: ['--no-sandbox', '--disable-setuid-sandbox'] });
-            const page = await browser.newPage();
-            await page.goto(shookit, { waitUntil: 'load', timeout: 0 })
-
-
-            // get name of product
-            let productTitle = await page.$$eval('.product-title', innerText => innerText.map((inr, i) =>
-                inr.innerText
-            ))
-
-            //get product price
-            let productPrice = await page.$$eval('.product-pricing-container', innerText => innerText.map((inr, i) =>
-                inr.innerText
-            ))
-
-            // console.log(productTitle, productTitle.length)
-
-            let obj = { company: "shookit", fruits: [] }
-
-            //create key value pairs of p.name and p.price
-
-            for (let index = 0; index < productTitle.length; index++) {
-
-                let regex = /([\u0590-\u05fe][(?!"")][\u0590-\u05fe]|[\u0590-\u05fe])+/
-                let regex2 = /\d+\.\d/g
-
-                //get unit type
-                let regex3 = /ק\"ג|מארז|יחידה/
-
-                let unit = productPrice[index].split(' ')
-                let unitOrWeight = unit[unit.length - 1].replace(")", "")
-                // console.log(unitOrWeight, index)
-
-                let weight = productPrice[index].match(regex)
-                // let unitOrWeight = productPrice[index].match(regex3)
-                let price = productPrice[index].match(regex2)
-
-                if (price === null) {
-                    price = 'empty'
-                } else if (price.length === 2) {
-                    price = price[1]
+    
+        const browser = await puppeteer.launch({args: ['--no-sandbox', '--disable-setuid-sandbox']});
+        const page = await browser.newPage();
+        await page.goto(shookit, {waitUntil: 'load', timeout: 0})
+    
+    
+        // get name of product
+        let productTitle = await page.$$eval('.product-title' , innerText => innerText.map((inr,i) => 
+            inr.innerText
+        ))
+    
+        //get product price
+        let productPrice = await page.$$eval('.product-pricing-container' , innerText => innerText.map((inr,i) => 
+            inr.innerText
+        ))
+    
+        // console.log(productTitle, productTitle.length)
+    
+        let obj = { company: "shookit", fruits: [] }
+    
+        //create key value pairs of p.name and p.price
+    
+        for (let index = 0; index < productTitle.length; index++) {
+    
+            let regex = /([\u0590-\u05fe][(?!"")][\u0590-\u05fe]|[\u0590-\u05fe])+/
+            let regex2 = /\d+\.\d/g
+    
+            //get unit type
+            let regex3 = /ק\"ג|מארז|יחידה/
+    
+            let unit = productPrice[index].split(' ')
+            let unitOrWeight = unit[unit.length-1].replace(")","")
+            // console.log(unitOrWeight, index)
+    
+            let weight = productPrice[index].match(regex)
+            // let unitOrWeight = productPrice[index].match(regex3)
+            let price = productPrice[index].match(regex2)
+    
+            if(price === null){
+                price = 'empty'
+            } else if(price.length === 2){
+                price = price[1]
+            } else {
+                price = price
+            }
+    
+    
+    
+            let name = productTitle[index]
+            let parseName = name.split(' ')
+    
+            //check for apple types
+            if(parseName[0] === "תפוח"){
+                name = `${parseName[0]} ${parseName[3]}`
+                if(name === 'תפוח סמית׳')
+                    name = `תפוח סמית`
+            }
+            if(`${parseName[0]} ${parseName[1]}` === "תמר מג'הול"){
+                name = `מארז תמר מג'הול 500 גרם`
+            }
+    
+            if(`${parseName[0]} ${parseName[1]}` === "אננס טבעי-"){
+                name = `אננס`
+                price = '0'
+            }
+            if(`${parseName[0]}` === "קיווי"){
+                if(parseName.length === 1){
+                    name = `קיווי ירוק`
                 } else {
-                    price = price
+                    name = `קיווי צהוב`
                 }
-
-
-
-                let name = productTitle[index]
-                let parseName = name.split(' ')
-
-                //check for apple types
-                if (parseName[0] === "תפוח") {
-                    name = `${parseName[0]} ${parseName[3]}`
-                    if (name === 'תפוח סמית׳')
-                        name = `תפוח סמית`
-                }
-                if (`${parseName[0]} ${parseName[1]}` === "תמר מג'הול") {
-                    name = `מארז תמר מג'הול 500 גרם`
-                }
-                if (`${parseName[0]}` === "קיווי") {
-                    if (parseName.length === 1) {
-                        name = `קיווי ירוק`
-                    } else {
-                        name = `קיווי צהוב`
-                    }
-
-                }
-                if (`${parseName[0]} ${parseName[1]} ${parseName[2]}` === "ענב שחור טלי") {
-                    name = `ענבים שחורים`
-                }
-                // נב שחור טלי
-                // תמר מג'הול
-
-                let temp = {}
-                temp.name = name
-                temp.price = price
-                temp.type = unitOrWeight
-                temp.category = 'Fruit'
-                temp.company = 'shookit'
-
-
-                obj.fruits.push(temp)
             }
-
-            let objects = {
-                name: 'Shookit'
+            if(`${parseName[0]}` === "ענבי"){
+                if(`${parseName[2]}` === 'ירוקים'){
+                    name = `ענבים ירוקים (1.3 ק"ג)`
+                } else if(`${parseName[2]}` === 'שחורים'){
+                    name = `ענבים שחורים (1.2 ק"ג)`
+                }
             }
-
-
-            let sortObj = obj.fruits.sort((a, b) => a.name.localeCompare(b.name))
-            // sortObj.forEach(el => console.log(el))
-
-            console.log(sortObj.length, 'fruitsShookit done')
-
-            //  browser.close()
-            return sortObj
-
+            if(`${parseName[0]}` === "אוכמניות"){
+                name = `אוכמניות (מארז)`
+            }
+            // נב שחור טלי
+            // תמר מג'הול
+    
+            let temp = {}
+            temp.name = name
+            temp.price = price
+            temp.type =  unitOrWeight
+            temp.category = 'Fruit'
+            temp.company = 'shookit'
+    
+    
+            obj.fruits.push(temp)
+        }
+    
+        let objects = {
+            name: 'Shookit'
+        }
+    
+    
+        let sortObj = obj.fruits.sort((a,b) => a.name.localeCompare(b.name))
+        // sortObj.forEach(el => console.log(el))
+        
+        console.log(sortObj.length,'fruitsShookit done')
+    
+        //  browser.close()
+         return sortObj
+    
         } catch (error) {
             console.log(error)
         }
@@ -115,7 +126,7 @@ module.exports =  class ShookitService {
 
 
     async getVegetables(){
-        
+    
     let refresh = `https://www.shookit.com/product-category/%d7%99%d7%a8%d7%a7%d7%95%d7%aa/`
 
     const browser = await puppeteer.launch({args: ['--no-sandbox', '--disable-setuid-sandbox']});
@@ -150,11 +161,26 @@ module.exports =  class ShookitService {
         // console.log(name)
 
         //change names of vegetables
+        if(`${arrName[0]}` === 'אבוקדו'){
+                name = `אבוקדו`
+        }
         if(`${arrName[0]}` === 'מלפפון'){
             if(`${arrName[1]}` === `בייבי`){
                 name = `מלפפון בייבי`
             } else {
                 name = `מלפפון מובחר`
+            }
+        }
+        if (`${arrName[1]}` === 'שרי') {
+            if (`${arrName[2]}` === 'תמר') {
+                name = `שרי אדום (מארז)`
+                let num = price * 0.4
+                price = `${num}`
+            }
+             else if (`${arrName[2]}` === 'צהובות'){
+                name = `שרי צהוב`
+                let num = price * 0.4
+                price = `${num}`
             }
         }
 
@@ -192,7 +218,7 @@ module.exports =  class ShookitService {
     browser.close()
 
     console.log(obj.vegetables.length, 'vegtablesShookit done')
-    return obj.vegetables 
+    return obj.vegetables  
     }
 
 
@@ -279,3 +305,5 @@ module.exports =  class ShookitService {
      return obj.greens   
     }
 }
+
+module.exports = ShookitService;
