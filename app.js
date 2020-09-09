@@ -15,7 +15,7 @@ app.use(cors())
 const allData = require('./controller/AllData')
 app.get('/promiseAll', allData.getAllData);
 app.get('/check', allData.testFunction);
-app.get('/download', allData.download)
+app.get('/download', allData.download);
 
 
 server.listen(process.env.PORT || 5000, () => console.log("Connected"))

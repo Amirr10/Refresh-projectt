@@ -1,8 +1,10 @@
 const excel = require('excel4node');
 const workbook = new excel.Workbook();
 
+//create an excel file from the objects that is getting
 class ExcelService {
 
+    //setting up excel workbook and filling 
     createExcelFileWithCombine(fruitsObjects, vegeObjects, greensObjects){
 
     let style = workbook.createStyle({
@@ -83,6 +85,7 @@ class ExcelService {
             'rightToLeft': true
         }
       };
+
     let worksheet = workbook.addWorksheet('Sheet 1', options);
     
     worksheet.row(1).setHeight(30);

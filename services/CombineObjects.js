@@ -39,12 +39,14 @@ class CombineService {
         
     }
 
-    console.log('combineFruitsOrVegetables done')
-    return combineObj
-
+     console.log('combineFruitsOrVegetables done')
+     return combineObj
     }
 
 
+    
+    //compare between refresh object with shookit object and combine the objects
+    //if they match into an array 
     compareTwoLists(productRefresh, shookitList){
 
         let combineArr = []
@@ -83,6 +85,8 @@ class CombineService {
     }
 
 
+    //compare between refresh object with carmella object and add the object
+    //if they match into the array of refresh and shookit 
     compareThirdLists(productRefresh, carmellaList){
 
         let carmellaObj = {}
@@ -113,10 +117,8 @@ class CombineService {
         } 
 
 
-    }
-    // console.log(carmellaObj,'carObj')
+     }
     return carmellaObj
-
     }
 
 }
