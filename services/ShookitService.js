@@ -164,16 +164,19 @@ const puppeteer = require('puppeteer');
         if(`${arrName[0]}` === 'אבוקדו'){
                 name = `אבוקדו`
         }
+        if(`${arrName[1]}` === 'טינקרבל'){
+            name = `פלפלונים מתוקים`
+        }
         if(`${arrName[0]}` === 'מלפפון'){
             if(`${arrName[1]}` === `בייבי`){
-                name = `מלפפון בייבי`
+                name = `מלפפון מיני`
             } else {
                 name = `מלפפון מובחר`
             }
         }
         if (`${arrName[1]}` === 'שרי') {
             if (`${arrName[2]}` === 'תמר') {
-                name = `שרי אדום (מארז)`
+                name = `שרי אדום`
                 let num = price * 0.4
                 price = `${num}`
             }
@@ -188,10 +191,10 @@ const puppeteer = require('puppeteer');
             name = `תפוח אדמה לבן`
         }
         if(name === 'תירס'){
-            name = `תירס (מארז)`
+            name = `תירס`
         }
         if(name === 'פטריות שמפיניון'){
-            name = `שמפניון (מארז)`
+            name = `שמפניון`
         }
         if(name === 'סלק'){
             name = `סלק אדום`

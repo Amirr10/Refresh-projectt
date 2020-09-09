@@ -12,7 +12,7 @@ exports.getAllData = async (req,res) => {
     res.json("Socket")
 }
 
-
+//async function to fetch all data and create an excel file from it
 exports.callProgram = async () => {
 
     let shookitInstance = new ShookitService()
@@ -22,7 +22,7 @@ exports.callProgram = async () => {
     let combineInstace = new CombineService()
     let excelService = new ExcelService()
 
-    
+
     let [shookitVege, refreshVege, carmellaVege] = await Promise.all([shookitInstance.getVegetables(), refreshInstance.getVegetables(), await carmellaInstance.getVegetables()])
     let [shookitFruits, refreshFruits, carmellaFruits] = await Promise.all([shookitInstance.getFruits(), refreshInstance.getFruits(), carmellaInstance.getFruits()])
     let [shookitGreen, refreshGreen] = await Promise.all([shookitInstance.getGreens(), refreshInstance.getGreens()])
@@ -35,6 +35,12 @@ exports.callProgram = async () => {
 }
 
 
+exports.download = (req,res) => {
+
+    console.log('/client')
+    res.download('Excel.xlsx')
+}
+
 
 exports.testFunction = async (req,res) => {
 
@@ -43,12 +49,12 @@ exports.testFunction = async (req,res) => {
     let carmellaInstance = new CarmellaService()
 
     // let obj = await shookitInstance.getFruits()
-    let obj = await refreshInstance.getFruits()
+    // let obj = await refreshInstance.getFruits()
     // let obj = await carmellaInstance.getFruits()
 
     // let obj = await shookitInstance.getVegetables()
     // let obj = await refreshInstance.getVegetables()
-    // let obj = await carmellaInstance.getVegetables()
+    let obj = await carmellaInstance.getVegetables()
 
     res.json(obj) 
 

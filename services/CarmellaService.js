@@ -256,12 +256,22 @@ class CarmellaService {
         if(`${name[0]}` === `טימין/`){
             productTitle[i] = `קורנית/טימין (מארז)`
         }    
+        if(`${name[0]}` === `כרובית\n(גודל`){
+            productTitle[i] = `כרובית`
+        } 
         if(`${name[0]}` === `כרישה/`){
             productTitle[i] = `לוף/כרישה`
         }
         if(`${name[0]}` === `תרד\n(מארז)\n400`){
             if(name.length === 1){
                 productTitle[i] = `עלי תרד`
+            }
+        }
+        if(`${name[0]} ${name[1]}` === `שום קלוף`){
+            if(prices[i] > 30){
+                console.log('ok')
+            } else {
+                productTitle[i] = `שום קלוף`
             }
         }
         if(`${name[0]}` === `רוקולה/ארוגולה`){
@@ -281,7 +291,7 @@ class CarmellaService {
         }
         if (`${name[1]}` === 'שרי') {
             if (`${name[2]}` === 'תמר') {
-                productTitle[i] = `שרי אדום (מארז)`
+                productTitle[i] = `שרי אדום`
                 let num = prices[i] * 0.4
                 prices[i] = `${num}`
             }
@@ -323,11 +333,8 @@ class CarmellaService {
             productTitle[i] = `תירס (מארז) "סיוון"`
         }
         if(`${name[0]} ${name[1]}` === `שום ארוז\n(מארז`){
-            // productTitle[i] = `ראש שום`
             productTitle[i] = `שום ארוז`
-            // let num = prices[i] / 4
-            // unitOrWeight[i] = `ק"ג`
-            // prices[i] = `${num}`
+            
         }
         if(`${name[0]} ${name[1]} ${name[2]}` === 'סלק אדום ואקום'){
             productTitle[i] = `סלק בוואקום (מארז)`
@@ -363,7 +370,7 @@ class CarmellaService {
             productTitle[i] = `פלפל צ'ילי (מארז)`
         }
         if(`${name[0]} ${name[1]} ${name[2]}` === `פלפל טינקרבל מתוק`){
-            productTitle[i] = `פלפלונים מתוקים - טינקרבל `
+            productTitle[i] = `פלפלונים מתוקים`
         }
         if(`${name[0]} ${name[1]}` === `שורש כורכום`){
                 productTitle[i] = `כורכום טרי`

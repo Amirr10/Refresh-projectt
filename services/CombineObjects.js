@@ -1,7 +1,7 @@
 
 class CombineService {
 
-
+    //combine refresh and shookit objects to one row
     async combineFruitsOrVegetables(shookitFruits, refreshFruits, carmellaFruits){
 
     let combineObj = []
